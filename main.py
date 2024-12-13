@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
-from columns import Base, User, Company, Vacancy, Resume, Submission
+from models import Base, User, Company, Vacancy, Resume, Submission
 
 # Создание базы данных
 DATABASE_URL = 'sqlite:///myDatabase.db'
