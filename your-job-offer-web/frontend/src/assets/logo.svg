@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="160" height="78" viewBox="0 0 1024 512" xml:space="preserve">
+<desc>Created with Fabric.js 5.2.4</desc>
+<defs>
+</defs>
+<rect x="0" y="0" width="100%" height="100%" fill="transparent"></rect>
+<g transform="matrix(0 0 0 0 0 0)" id="19309a3a-b565-45b9-a518-ced851051390"  >
+</g>
+<g transform="matrix(1 0 0 1 512 256)" id="ef7fb2d2-d02b-4a7f-85e2-ada55652cf6a"  >
+<rect style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1; visibility: hidden;" vector-effect="non-scaling-stroke"  x="-512" y="-256" rx="0" ry="0" width="1024" height="512" />
+</g>
+<g transform="matrix(0.47 0 0 0.47 297.96 255.02)"  >
+<path style="stroke: rgb(0,0,0); stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(61,139,253); fill-rule: nonzero; opacity: 1;" vector-effect="non-scaling-stroke"  transform=" translate(-256, -240)" d="M 184 48 L 328 48 C 332.4 48 336 51.6 336 56 L 336 96 L 176 96 L 176 56 C 176 51.6 179.6 48 184 48 z M 128 56 L 128 96 L 64 96 C 28.7 96 0 124.7 0 160 L 0 256 L 192 256 L 320 256 L 512 256 L 512 160 C 512 124.7 483.3 96 448 96 L 384 96 L 384 56 C 384 25.1 358.9 0 328 0 L 184 0 C 153.1 0 128 25.1 128 56 z M 512 288 L 320 288 L 320 320 C 320 337.7 305.7 352 288 352 L 224 352 C 206.3 352 192 337.7 192 320 L 192 288 L 0 288 L 0 416 C 0 451.3 28.7 480 64 480 L 448 480 C 483.3 480 512 451.3 512 416 L 512 288 z" stroke-linecap="round" />
+</g>
+<g transform="matrix(1 0 0 1 701.7 253.74)" style="" id="ebda6457-37da-40bb-8159-69c36690dd07"  >
+		<text xml:space="preserve" font-family="Arial" font-size="138" font-style="normal" font-weight="900" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1; white-space: pre;" ><tspan x="-254.32" y="-31.11" style="white-space: pre; ">Your job </tspan><tspan x="-146.39" y="109.01" >offer</tspan></text>
+</g>
+</svg>

@@ -11,12 +11,12 @@ export default {
   name: 'HelloWorld',
   data() {
     return {
-      msg: "Hello"
+      msg: "Hell"
     }
   },
   methods : {
     getResponse() {
-      const path = "http://127.0.0.1:5000/";
+      const path = "http://127.0.0.1:5000/hello";
       axios.get(path)
       .then((res) => {
         console.log(res.data)
@@ -30,6 +30,7 @@ export default {
   created(){
     this.getResponse();
   }
+
 }
 </script>
 
