@@ -164,6 +164,7 @@ import { store } from "../../script/store.js";
 
 <script>
 import axios from "axios";
+import { store } from "../../script/store.js";
 
 export default {
   name: "EditResume",
@@ -181,10 +182,12 @@ export default {
         age: "",
         gender: "",
       },
-      imagePreviewStyle: {},
+      imagePreviewStyle: {}, // For the image preview
+      userId: localStorage.getItem("user_id"), // Get user_id from localStorage
     };
   },
   methods: {
+    // Preview uploaded image and save as base64
     previewImage(event) {
       const file = event.target.files[0];
       if (file) {
@@ -196,35 +199,111 @@ export default {
             backgroundPosition: "center",
             border: "none",
           };
-          // Save to localStorage
           localStorage.setItem("imagePreview", e.target.result);
         };
         reader.readAsDataURL(file);
       }
     },
 
+    // Save form data to localStorage
     saveForm() {
       localStorage.setItem("formData", JSON.stringify(this.formData));
     },
 
+    // Submit form data to the backend
     async submit() {
-      store.userFilledData = true;
-      // const form = new FormData(document.getElementById("userData"));
-      // const data = Object.fromEntries(form.entries()); // Convert FormData to JSON-like object
-      // console.log(data);
-      // localStorage.setItem("formData", JSON.stringify(data)); // Save to localStorage
-      // const path = "http://127.0.0.1:5000/form";
-      // axios
-      //   .post(path, form)
-      //   .then((res) => {
-      //     console.log(res.data);
-      //   })
-      //   .catch((err) => {
-      //     console.error(err);
-      //   });
+      store.userFilledData = true; // Set store flag to indicate data submission
+      try {
+        const formData = new FormData();
+        const resumeFile = document.getElementById("upload").files[0];
+
+        if (!resumeFile) {
+          alert("Please upload a resume.");
+          return;
+        }
+
+        // Append data to FormData
+        if (this.userId) {
+          formData.append("user_id", this.userId); // Include user_id for updates
+        }
+        formData.append("first_name", this.formData.firstName);
+        formData.append("last_name", this.formData.lastName);
+        formData.append("resume", resumeFile);
+        formData.append("country", this.formData.country);
+        formData.append("city", this.formData.city);
+        formData.append("education", this.formData.education);
+        formData.append("position", this.formData.position);
+        formData.append("experience", this.formData.experience);
+        formData.append("skills", this.formData.skills);
+        formData.append("age", parseInt(this.formData.age, 10));
+        formData.append("gender", this.formData.gender);
+
+        // Send data to the server
+        const response = await axios.post(
+          `${store.baseUrl}userData`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
+
+        console.log("Response from server:", response.data);
+
+        const { message, user_id } = response.data;
+
+        // Save user_id in localStorage if creating a new user
+        if (!this.userId) {
+          localStorage.setItem("user_id", user_id);
+        }
+
+        alert(`${message}! Welcome!`);
+      } catch (error) {
+        if (error.response) {
+          console.error("Server responded with:", error.response.data);
+          alert(`Error: ${error.response.data.detail || "Invalid request."}`);
+        } else {
+          console.error("Request error:", error);
+          alert(
+            "An error occurred while submitting the form. Please try again."
+          );
+        }
+      }
     },
+
+    // (Optional) Fetch user data from server
+    // async fetchUserData() {
+    //   if (!this.userId) return;
+
+    //   try {
+    //     const response = await axios.get(
+    //       `${store.baseUrl}userData/${this.userId}`
+    //     );
+
+    //     const data = response.data;
+
+    //     // Populate formData with fetched data
+    //     this.formData = {
+    //       firstName: data.first_name || "",
+    //       lastName: data.last_name || "",
+    //       country: data.country || "",
+    //       city: data.city || "",
+    //       education: data.education || "",
+    //       position: data.position || "",
+    //       experience: data.experience || "",
+    //       skills: data.skills || "",
+    //       age: data.age || "",
+    //       gender: data.gender || "",
+    //     };
+
+    //     console.log("Fetched user data:", data);
+    //   } catch (error) {
+    //     console.error("Error fetching user data:", error);
+    //     alert("Failed to load user data. Please try again.");
+    //   }
+    // },
   },
   mounted() {
+    // Load saved data from localStorage
     const savedData = localStorage.getItem("formData");
     if (savedData) {
       this.formData = JSON.parse(savedData);
@@ -239,11 +318,13 @@ export default {
         border: "none",
       };
     }
-  },
 
+    // Fetch user data from server if needed
+    // this.fetchUserData();
+  },
   watch: {
     formData: {
-      handler: "saveForm",
+      handler: "saveForm", // Automatically save form data on change
       deep: true,
     },
   },

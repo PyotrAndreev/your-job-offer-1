@@ -1,0 +1,15 @@
+{
+    "b137b551-1734-4c4a-92d5-c7d6279fb03a": {
+        "first_name": "Ivan",
+        "last_name": "Ivan",
+        "resume": "uploads/b137b551-1734-4c4a-92d5-c7d6279fb03a_resume_example.pdf",
+        "country": "Russia",
+        "city": "Moscow",
+        "education": "MIPT",
+        "position": "frontend developer",
+        "experience": "3 years",
+        "skills": "html, css, js, ts",
+        "age": 19,
+        "gender": "male"
+    }
+}

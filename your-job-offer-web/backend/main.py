@@ -1,55 +1,154 @@
-# from fastapi import FastAPI
+import os
+import json
+from fastapi import FastAPI, Depends, HTTPException, File, Form, UploadFile
+from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi_jwt_auth import AuthJWT
+from dotenv import load_dotenv
+from pydantic import BaseModel
+from uuid import uuid4
+from pathlib import Path
 
-# app = FastAPI()
+load_dotenv()
 
+class Settings(BaseModel):
+    authjwt_secret_key: str = os.getenv("JWT_SECRET_KEY")
 
-# @app.get("/")
-# async def root():
-#     return {"message": "Hello World"}
+@AuthJWT.load_config
+def get_config():
+    return Settings()
 
-import requests
+app = FastAPI()
 
-# При условии уже полученных access_token и refresh_token
-# message - сопроводительное письмо не более 10000 символов
-def apply_for_vacancy(access_token, resume_id, vacancy_id, message):
-	headers = {
-		"HH-User-Agent": "YourJobOffer_1 (shirokoriad.ao@phystech.edu)",
-		"Authorization": f"Bearer {access_token}",
-	}
-
-	data = {
-		"resume_id": resume_id,
-		"vacancy_id": vacancy_id,
-		"message": message,
-	}
-
-	res = requests.post("https://api.hh.ru/negotiations", data=data, headers=headers)
-
-	if res.status_code == 201:
-		print(f"Отклик на вакансию c vacancy_id {vacancy_id} по resume_id {resume_id} совершен")
-		return True
-	elif res.status_code == 303:
-		location = res.headers.get("Location")
-		if location:
-			print("Перейдите на сайт работодателя: " + location)
-		else:
-			print("Схема отклика без внешнего URL")
-		return False
-	elif res.status_code == 400:
-		print(res.content)
-		print("Ошибка в параметрах запроса")
-		return False
-	elif res.status_code == 403:
-		print("Невозможно откликнуться на вакансию")
-		return False
-	else:
-		print("Неизвестная ошибка при отклике")
-		return False
-
-
-apply_for_vacancy(
-	"USERJS524ISR5PSCKVE1KKN6FLNDGL3E1FMUJAP8NKLM07T1OQHC3OPAI72JI3J7", 
-	"ef014e54ff0e19365d0039ed1f7139707a384e", 
-	"113150389", 
-	"JustTry"
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
+# Directory to store uploaded files
+UPLOAD_DIR = Path("uploads")
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+# File to simulate database
+DB_FILE = Path("user_db.json")
+if not DB_FILE.exists():
+    DB_FILE.write_text(json.dumps({}))  # Initialize with an empty JSON object
+
+
+# Function to save file to disk
+def save_file(file: UploadFile, file_path: Path):
+    with open(file_path, "wb") as buffer:
+        buffer.write(file.file.read())
+    return file_path
+
+
+# Function to load user data from the file
+def load_user_data():
+    with open(DB_FILE, "r") as file:
+        return json.load(file)
+
+
+# Function to save user data to the file
+def save_user_data(data):
+    with open(DB_FILE, "w") as file:
+        json.dump(data, file, indent=4)
+
+
+@app.post("/userData")
+async def user_data(
+    user_id: str = Form(None),
+    first_name: str = Form(...),
+    last_name: str = Form(...),
+    resume: UploadFile = File(...),
+    country: str = Form(...),
+    city: str = Form(...),
+    education: str = Form(...),
+    position: str = Form(...),
+    experience: str = Form(...),
+    skills: str = Form(...),
+    age: int = Form(...),
+    gender: str = Form(...)
+):
+    # Load existing user data
+    user_data = load_user_data()
+
+    if not user_id:
+        # New user creation
+        user_id = str(uuid4())  # Generate new user ID
+        message = "New user created successfully"
+    else:
+        # Update existing user
+        if user_id not in user_data:
+            raise HTTPException(status_code=404, detail="User ID not found")
+        message = "User data updated successfully"
+
+    # Save the resume file with the user ID as part of the filename
+    resume_filename = f"{user_id}_{resume.filename}"
+    resume_path = UPLOAD_DIR / resume_filename
+    save_file(resume, resume_path)
+
+    # Update or create the user in the "database"
+    user_data[user_id] = {
+        "first_name": first_name,
+        "last_name": last_name,
+        "resume": str(resume_path),
+        "country": country,
+        "city": city,
+        "education": education,
+        "position": position,
+        "experience": experience,
+        "skills": skills,
+        "age": age,
+        "gender": gender,
+    }
+    save_user_data(user_data)
+
+    # Return the user ID and success message
+    return {
+        "message": message,
+        "user_id": user_id,
+    }
+
+
+# @app.get("/userData/{user_id}")
+# async def get_user_data(user_id: str):
+#     # Load user dataser_data = load_user_data()
+
+#     # Fetch user data by ID
+#     user_info = user_data.get(user_id)
+
+#     if not user_info:
+#         raise HTTPException(status_code=404, detail="User not found")
+
+#     return user_info
+
+
+@app.get("/hello")
+async def hello():
+    return "Hello!!"
+
+@app.post("/registration")
+async def registration():
+    return "registered"
+
+@app.post("/login")
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), Authorize: AuthJWT = Depends()):
+    username = form_data.username
+    password = form_data.password
+
+    # Validate username and password (mocked here)
+    if username != "test" or password != "test":
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+
+    access_token = Authorize.create_access_token(subject=username)
+    return {"access_token": access_token}
+
+@app.get("/dashboard")
+async def dashboard(Authorize: AuthJWT = Depends()):
+    Authorize.jwt_required()
+    current_user = Authorize.get_jwt_subject()
+    return {"logged_in_as": current_user}
