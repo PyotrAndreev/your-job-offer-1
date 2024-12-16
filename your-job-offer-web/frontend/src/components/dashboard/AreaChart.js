@@ -5,23 +5,24 @@ import { GChart } from 'vue-google-charts';
 export const type = 'AreaChart';
 
 export const data = [
-  ['Task', 'H'],
-  ['Work', 11],
-  ['Eat', 2],
-  ['Commute', 2],
-  ['Watch TV', 2],
-  ['Sleep', 7],
+  ['Applications', 'X'],
+  ['August', 2],
+  ['September', 4],
+  ['Ocotber', 8],
+  ['November', 5],
+  ['December', 12],
 ];
 
 export const options = {
 //   title: 'My Daily Activities',
 //   width: 800,
 //   height: 600,
+
   colors: ['#6ea8fe', '#3d8bfd', '#0d6efd', '#0a58ca', '#084298']
 };
 
 export default defineComponent({
-  name: 'GoogleChart',
+  name: 'AreaChart',
   components: {
     GChart,
   },

@@ -86,9 +86,7 @@
               <div
                 class="preview-image mx-auto mb-2 border rounded-3 d-flex justify-content-center align-items-center"
               >
-                <span class="fw-bold fs-3 border p-3 rounded-5 shadow"
-                  >Service prview</span
-                >
+                <img src="../assets/1.svg" />
               </div>
             </div>
           </div>
@@ -110,9 +108,7 @@
               <div
                 class="preview-image mx-auto mb-2 border rounded-3 d-flex justify-content-center align-items-center"
               >
-                <span class="fw-bold fs-3 border p-3 rounded-5 shadow"
-                  >Service prview</span
-                >
+                <img src="../assets/2.svg" />
               </div>
             </div>
           </div>
@@ -134,9 +130,7 @@
               <div
                 class="preview-image mx-auto mb-2 border rounded-3 d-flex justify-content-center align-items-center"
               >
-                <span class="fw-bold fs-3 border p-3 rounded-5 shadow"
-                  >Service prview</span
-                >
+                <img src="../assets/3.svg" />
               </div>
             </div>
           </div>

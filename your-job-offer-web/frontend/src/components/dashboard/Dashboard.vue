@@ -7,19 +7,23 @@
         <div class="card p-3 text-center shadow-sm">
           <h5 class="card-title">Progress</h5>
           <!-- <GChart type="AreaChart" :data="chartData" :options="chartOptions" /> -->
-          <GoogleChart />
+          <PieChart />
         </div>
       </div>
 
       <!-- Offers Goal -->
       <div class="col-12 col-md-6 col-lg-4">
-        <div class="card p-3 text-center shadow-sm h-100">
+        <div class="card p-3 text-center shadow-sm">
           <h5 class="card-title">How many offers to find?</h5>
           <div
             class="d-flex align-items-center justify-content-center counter w-100"
           >
             <!-- Left Arrow Button -->
-            <button class="btn btn-primary rounded-5" @click="decrementNumber">
+            <button
+              class="btn btn-primary rounded-5"
+              @click="decrementNumber"
+              :disabled="store.userFilledData === false"
+            >
               <font-awesome-icon :icon="['fas', 'angle-left']" />
             </button>
 
@@ -27,7 +31,11 @@
             <span class="fs-1 px-5 number">{{ number }}</span>
 
             <!-- Right Arrow Button -->
-            <button class="btn btn-primary rounded-5" @click="incrementNumber">
+            <button
+              class="btn btn-primary rounded-5"
+              @click="incrementNumber"
+              :disabled="store.userFilledData === false"
+            >
               <font-awesome-icon :icon="['fas', 'angle-right']" />
             </button>
           </div>
@@ -38,10 +46,10 @@
 
       <!-- Analytics Chart -->
       <div class="col-12 col-md-6 col-lg-4">
-        <div class="card p-3 shadow-sm bg-white">
+        <div class="card p-3 shadow-sm text-center bg-white">
           <h5 class="card-title">Analytics</h5>
           <!-- <GChart type="LineChart" :data="chartData" :options="chartOptions" /> -->
-          <GoogleChart />
+          <AreaChart />
         </div>
       </div>
     </div>
@@ -52,16 +60,17 @@
       <button
         type="button"
         class="btn btn-primary btn-lg fs-3 fw-bold rounded-4"
-        :disabled="store.count === false"
+        :disabled="store.userFilledData === false"
+        @click="searchOffers"
       >
         Search jobs
       </button>
 
       <div
-        v-if="store.count === false"
+        v-if="store.userFilledData === false"
         class="text-secondary mt-4 fs-5 w-50 text-center"
       >
-        Please upload your resume in "About me" tab
+        Please fill in your data in "About me" tab
       </div>
     </div>
 
@@ -78,18 +87,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Apple</td>
-            <td>12 Sep 2023</td>
-            <td>Senior Developer</td>
-            <td>$120,000</td>
-            <td><span class="badge bg-success">Applied</span></td>
-          </tr>
-          <tr>
-            <td>Amazon</td>
-            <td>08 Aug 2023</td>
-            <td>Project Manager</td>
-            <td>$110,000</td>
+          <tr v-for="offer in offers">
+            <td>{{ offer.company }}</td>
+            <td>{{ offer.date }}</td>
+            <td>{{ offer.position }}</td>
+            <td>{{ offer.salary }}</td>
+            <td>
+              <a :href="offer.link" target="_blank">сайт работодателя</a>
+            </td>
             <td><span class="badge bg-warning">In Review</span></td>
           </tr>
         </tbody>
@@ -103,13 +108,13 @@ import { store } from "../../script/store.js";
 </script>
 
 <script>
-// import { GChart } from "vue-google-charts";
-import GoogleChart from "../GoogleChart";
+import AreaChart from "./AreaChart.js";
+import PieChart from "./PieChart.js";
 
 export default {
   components: {
-    // GChart,
-    GoogleChart,
+    AreaChart,
+    PieChart,
   },
   name: "Dashboard",
   methods: {
@@ -123,29 +128,33 @@ export default {
         this.number -= 1; // Decrease the number
       }
     },
+    async searchOffers() {
+      this.newOffer = {
+        company: "amoCrm",
+        date: "15 Dec 2024",
+        position: "Junior frontend developer",
+        salary: "до 50 000 ₽",
+        status: "awaiting",
+        link: "https://hh.ru/vacancy/111898417?hhtmFromLabel=suitable_vacancies&hhtmFrom=vacancy",
+      };
+
+      setTimeout(() => {
+        this.offers.push({ ...this.newOffer });
+      }, 5000);
+    },
   },
   data: () => ({
-    chartData: [
-      ["Year", "A", "B", "C"],
-      ["2014", 1000, 400, 200],
-      ["2015", 1170, 460, 250],
-      ["2016", 660, 1120, 300],
-      ["2017", 1030, 540, 350],
-    ],
-    chartOptions: {
-      chart: {
-        title: "Statistics",
-        subtitle: "A, B, C",
-        lineWidth: 10,
-        series: {
-          0: { color: "#6f9654" },
-          1: { color: "#1c91c0" },
-          2: { color: "#43459d" },
-        },
-        // colors: ["green", "yellow", "gray"],
-      },
-    },
     number: 0,
+
+    offers: [],
+    newOffer: {
+      company: "",
+      date: "",
+      position: "",
+      salary: "",
+      status: "",
+      link: "",
+    },
   }),
 };
 </script>

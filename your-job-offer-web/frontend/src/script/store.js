@@ -2,5 +2,6 @@
 import { reactive } from 'vue'
 
 export const store = reactive({
-  count: false
+  userFilledData: false,
+  applicationsToFind: 0
 })

@@ -23,7 +23,7 @@
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
-          Username
+          {{ userName }}
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
           <li><a class="dropdown-item" href="#home">Return to main</a></li>
@@ -35,6 +35,27 @@
     </div>
   </nav>
 </template>
+
+<script setup>
+import { store } from "../../script/store.js";
+</script>
+
+<script>
+export default {
+  data() {
+    return {
+      userName: "Your name",
+    };
+  },
+  mounted() {
+    const savedData = localStorage.getItem("formData");
+    if (savedData) {
+      store.userFilledData = true;
+      this.userName = JSON.parse(savedData).firstName;
+    }
+  },
+};
+</script>
 
 <style scoped>
 button:hover {
