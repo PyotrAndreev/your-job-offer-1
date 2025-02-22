@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, BigInteger, String, Boolean, DateTime, ForeignKey, JSON, create_engine
+from sqlalchemy import Column, Integer, BigInteger, String, Boolean, DateTime, ForeignKey, JSON, create_engine, ARRAY
 from sqlalchemy.orm import relationship, sessionmaker, declarative_base
 from datetime import datetime
 
@@ -35,7 +35,7 @@ class Company(Base):
     website = Column(JSON)
     created_at = Column(DateTime, default=datetime.utcnow)  # Добавлено поле created_at
 
-    vacancies = relationship("Vacancy", back_populates="company")
+    # vacancies = relationship("Vacancy", back_populates="company")
 
     def __repr__(self):
         return f"<Company(company_id={self.company_id}, company_title={self.company_title}, phone={self.phone}, email={self.email}, created_at={self.created_at})>"
@@ -44,24 +44,24 @@ class Vacancy(Base):
     __tablename__ = 'vacancy'
 
     vacancy_id = Column(BigInteger, primary_key=True)
-    company_id = Column(BigInteger, ForeignKey('company.company_id'))
-    job_title = Column(JSON)
+    # company_id = Column(BigInteger, ForeignKey('company.company_id'))
+    job_title = Column(String)
     response_letter_required = Column(Boolean)
-    country = Column(JSON)
-    city = Column(JSON)
-    district = Column(JSON)
-    salary = Column(BigInteger)
-    office_address = Column(JSON)
-    subway_station = Column(JSON)
-    employer_information = Column(JSON)
-    requirements = Column(JSON)
-    work_schedule_working = Column(BigInteger)
-    work_schedule_weekend = Column(BigInteger)
-    experience = Column(JSON)
+    country = Column(String)
+    city = Column(String)
+    district = Column(String)
+    salary = Column(Integer)
+    office_address = Column(String)
+    subway_station = Column(String)
+    employer_information = Column(String)
+    requirements = Column(String)
+    # work_schedule_working_days = Column(ARRAY(String))
+    # work_schedule_time_intervals = Column(ARRAY(String))
+    experience = Column(String)
     remote_work = Column(Boolean)
-    created_at = Column(DateTime, default=datetime.utcnow)  # Добавлено поле created_at
+    # created_at = Column(DateTime, default=datetime.utcnow)  # Добавлено поле created_at
 
-    company = relationship("Company", back_populates="vacancies")
+    # company = relationship("Company", back_populates="vacancies")
     submissions = relationship("Submission", back_populates="vacancy")
 
     def __repr__(self):

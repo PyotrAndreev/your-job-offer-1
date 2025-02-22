@@ -14,6 +14,9 @@ from dataclasses import dataclass
 import logging
 import sys
 
+from sqlalchemy.orm import sessionmaker
+from models import Vacancy as DB_Vacancy, engine
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -40,7 +43,39 @@ class Vacancy:
     work_schedule_time_intervals: list = None
     experience: str = ""
     remote_work: bool = False
-     
+
+
+# Создаем сессию
+Session = sessionmaker(bind=engine)
+session = Session()
+
+
+def create_vacancy(vacancy):
+    # Создание новой вакансии
+    new_vacancy = DB_Vacancy(
+        vacancy_id=vacancy.vacancy_id,
+        job_title=vacancy.job_title,
+        response_letter_required=vacancy.response_letter_required,
+        country=vacancy.country,
+        city=vacancy.city,
+        district=vacancy.district,
+        salary=vacancy.salary[0],
+        office_address=vacancy.office_address,
+        subway_station=vacancy.subway_station,
+        employer_information=vacancy.employer_information,
+        requirements=vacancy.requirements,
+        # work_schedule_working_days=vacancy.work_schedule_working_days,
+        # work_schedule_time_intervals=vacancy.work_schedule_time_intervals,
+        experience=vacancy.experience,
+        remote_work=vacancy.remote_work,
+        # created_at=datetime.now()  # Устанавливаем текущее время
+    )
+
+    # Добавление вакансии в сессию и коммит
+    session.add(new_vacancy)
+    session.commit()
+
+    print(f"Vacancy created: {new_vacancy.vacancy_id}, Title: {new_vacancy.job_title}")
 
 
 
@@ -160,6 +195,7 @@ def get_hh_vacancies(start_date):
                         currency = j['salary']['currency']
                     vacancy.salary = [salary_from, salary_to, currency]
                     hh_vacancies.append(vacancy)
+                    create_vacancy(vacancy)
                     file.write(str(j['published_at']) + ": " + str(vacancy) + '\n' + '\n')
                 logger.info(f"Текущее количество собранных c hh.ru вакансий: {len(hh_vacancies)}")
             time.sleep(3)
@@ -263,7 +299,9 @@ avito_req = requests.get(avito_vacancies_url)
 
 #print(len(get_hh_vacancies(datetime(2010, 1, 1))))
 
-get_hh_vacancies(datetime(2024, 11, 24))
+get_hh_vacancies(datetime(2025, 2, 21))
 
 
 # конец запуска - Собираем объекты вакасний за 2024-11-26 00:00:00
+
+session.close()
