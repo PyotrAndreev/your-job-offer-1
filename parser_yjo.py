@@ -78,7 +78,7 @@ def get_country(area_id):
     return None
 
 
-file_handler = logging.FileHandler('C:\\Users\\Денис\\OneDrive\\Рабочий стол\\Проект\\hh_vacancies.txt', mode='w', encoding='utf-8')
+file_handler = logging.FileHandler('hh_vacancies', mode='w', encoding='utf-8')
 logger.addHandler(file_handler)
 #stream_handler = logging.StreamHandler(stream=sys.stdout)
 #logger.addHandler(stream_handler)
@@ -87,7 +87,7 @@ def get_hh_vacancies(start_date):
     """ Получение списка вакансий с сайта HeadHunter начиная с указанной даты до текущего дня.
     :param start_date: Начальная дата поиска вакансий. :type start_date: datetime
     :return: Список объектов типа Vacancy. :rtype: list """
-    file = open('C:\\Users\\Денис\\OneDrive\\Рабочий стол\\Проект\\hh_vacancies_for_DB.txt', 'w', encoding="utf-8")
+    file = open('hh_vacancies_for_DB', 'w', encoding="utf-8")
     current_date = start_date
     hh_vacancies = []
     logger.info("Начинаем сбор вакансий с hh.ru")
@@ -168,7 +168,7 @@ def get_hh_vacancies(start_date):
     logger.info("Сбор вакансий с hh.ru завершён")
     return hh_vacancies
 
-file_handler = logging.FileHandler('C:\\Users\\Денис\\OneDrive\\Рабочий стол\\Проект\\sj_vacancies.txt', mode='w', encoding='utf-8')
+file_handler = logging.FileHandler('sj_vacancies', mode='w', encoding='utf-8')
 logger.addHandler(file_handler)
 stream_handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(stream_handler)
