@@ -8,7 +8,7 @@ from datetime import datetime
 from models import Base, User, Company, Vacancy, Resume, Submission
 
 # Создание базы данных
-DATABASE_URL = 'sqlite:///myDatabase.db'
+DATABASE_URL = 'sqlite:///myDatabase_res.db'
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -57,7 +57,7 @@ class VacancyCreate(BaseModel):
     country: dict
     city: dict
     district: dict
-    salary: Optional[int] = None
+    salary: list
     office_address: dict
     subway_station: dict
     employer_information: dict

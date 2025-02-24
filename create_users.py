@@ -1,6 +1,6 @@
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
-from models import User, engine
+from models import User, engine, Vacancy
 import json
 # Создаем сессию
 Session = sessionmaker(bind=engine)
@@ -21,7 +21,7 @@ def create_user(user_id, name, email, phone):
     session.commit()
     
     print(f"User created: {new_user.user_id}, Name: {new_user.name}")
-create_user(2, "name1", "email1", 23423)
+# create_user(5, "name1", "email1", 23423)
 def get_all_users():
     users = session.query(User).all()
     return users
@@ -30,6 +30,15 @@ def get_all_users():
 all_users = get_all_users()
 for user in all_users:
     print(user)
+
+def get_all_vacancies():
+    vacancies = session.query(Vacancy).all()
+    return vacancies
+
+# Пример использования
+all_vacancies = get_all_vacancies()
+for vacancy in all_vacancies:
+    print(vacancy.job_title)
 
 
 session.close()

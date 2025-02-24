@@ -6,15 +6,15 @@ from datetime import datetime
 Base = declarative_base()
 
 # Определение URL базы данных
-DATABASE_URL = 'sqlite:///myDatabase.db'
+DATABASE_URL = 'sqlite:///myDatabase_res.db'
 engine = create_engine(DATABASE_URL)
 
 class User(Base):
     __tablename__ = 'user'
 
     user_id = Column(BigInteger, primary_key=True)
-    name = Column(JSON)
-    email = Column(JSON)
+    name = Column(String)
+    email = Column(String)
     phone = Column(BigInteger)
     created_at = Column(DateTime, default=datetime.utcnow)  # Добавлено поле created_at
 
@@ -27,12 +27,12 @@ class Company(Base):
     __tablename__ = 'company'
 
     company_id = Column(BigInteger, primary_key=True)
-    company_title = Column(JSON)
+    company_title = Column(String)
     phone = Column(BigInteger)  # Контактный номер
-    email = Column(JSON)  # Контактный email
-    company_type = Column(JSON)
-    description = Column(JSON)
-    website = Column(JSON)
+    email = Column(String)  # Контактный email
+    company_type = Column(String)
+    description = Column(String)
+    website = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)  # Добавлено поле created_at
 
     # vacancies = relationship("Vacancy", back_populates="company")
@@ -44,22 +44,22 @@ class Vacancy(Base):
     __tablename__ = 'vacancy'
 
     vacancy_id = Column(BigInteger, primary_key=True)
-    # company_id = Column(BigInteger, ForeignKey('company.company_id'))
+    company_id = Column(BigInteger, ForeignKey('company.company_id'))
     job_title = Column(String)
     response_letter_required = Column(Boolean)
     country = Column(String)
     city = Column(String)
     district = Column(String)
-    salary = Column(Integer)
+    salary = Column(String)
     office_address = Column(String)
     subway_station = Column(String)
     employer_information = Column(String)
     requirements = Column(String)
-    # work_schedule_working_days = Column(ARRAY(String))
-    # work_schedule_time_intervals = Column(ARRAY(String))
+    work_schedule_working_days = Column(String)
+    work_schedule_time_intervals = Column(String)
     experience = Column(String)
     remote_work = Column(Boolean)
-    # created_at = Column(DateTime, default=datetime.utcnow)  # Добавлено поле created_at
+    created_at = Column(DateTime, default=datetime.utcnow)  # Добавлено поле created_at
 
     # company = relationship("Company", back_populates="vacancies")
     submissions = relationship("Submission", back_populates="vacancy")
@@ -72,19 +72,19 @@ class Resume(Base):
 
     resume_id = Column(Integer, primary_key=True)
     user_id = Column(BigInteger, ForeignKey('user.user_id'))
-    title = Column(JSON)
-    job_title = Column(JSON)
-    country = Column(JSON)
-    city = Column(JSON)
+    title = Column(String)
+    job_title = Column(String)
+    country = Column(String)
+    city = Column(String)
     district = Column(JSON)
     min_salary = Column(BigInteger)
     max_salary = Column(BigInteger)
-    work_schedule_working = Column(BigInteger)
-    work_schedule_weekend = Column(BigInteger)
-    experience = Column(JSON)
+    work_schedule_working_days = Column(String)
+    work_schedule_time_intervals = Column(String)
+    experience = Column(String)
     remote_work = Column(Boolean)
-    education = Column(JSON)
-    additional_information = Column(JSON)
+    education = Column(String)
+    additional_information = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)  # Добавлено поле created_at
 
     user = relationship("User", back_populates="resumes")
@@ -97,7 +97,7 @@ class Submission(Base):
     __tablename__ = 'submission'
     submission_id = Column(BigInteger, primary_key=True)
     resume_id = Column(BigInteger, ForeignKey('resume.resume_id'))
-    status = Column(JSON)
+    status = Column(String)
     sent_at = Column(DateTime)
     vacancy_id = Column(BigInteger, ForeignKey('vacancy.vacancy_id'))
     created_at = Column(DateTime, default=datetime.utcnow)  # Добавлено поле created_at

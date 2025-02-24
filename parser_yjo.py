@@ -59,16 +59,16 @@ def create_vacancy(vacancy):
         country=vacancy.country,
         city=vacancy.city,
         district=vacancy.district,
-        salary=vacancy.salary[0],
+        salary=str(vacancy.salary),
         office_address=vacancy.office_address,
         subway_station=vacancy.subway_station,
         employer_information=vacancy.employer_information,
         requirements=vacancy.requirements,
-        # work_schedule_working_days=vacancy.work_schedule_working_days,
-        # work_schedule_time_intervals=vacancy.work_schedule_time_intervals,
+        work_schedule_working_days=str(vacancy.work_schedule_working_days),
+        work_schedule_time_intervals=str(vacancy.work_schedule_time_intervals),
         experience=vacancy.experience,
         remote_work=vacancy.remote_work,
-        # created_at=datetime.now()  # Устанавливаем текущее время
+        created_at=datetime.now()  # Устанавливаем текущее время
     )
 
     # Добавление вакансии в сессию и коммит
