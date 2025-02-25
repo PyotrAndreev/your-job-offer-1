@@ -8,7 +8,7 @@ from datetime import datetime
 from models import Base, User, Company, Vacancy, Resume, Submission
 
 # Создание базы данных
-DATABASE_URL = 'sqlite:///myDatabase_res.db'
+DATABASE_URL = 'sqlite:///myDatabase_mini.db'
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

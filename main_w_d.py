@@ -77,7 +77,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
  
 # Создание базы данных
-DATABASE_URL = 'sqlite:///myDatabase.db'
+DATABASE_URL = ('sqlite:///myDatabase_mini.db')
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
  

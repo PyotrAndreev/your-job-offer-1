@@ -6,7 +6,7 @@ from datetime import datetime
 Base = declarative_base()
 
 # Определение URL базы данных
-DATABASE_URL = 'sqlite:///myDatabase_res.db'
+DATABASE_URL = 'sqlite:///myDatabase_mini.db'
 engine = create_engine(DATABASE_URL)
 
 class User(Base):
@@ -44,6 +44,7 @@ class Vacancy(Base):
     __tablename__ = 'vacancy'
 
     vacancy_id = Column(BigInteger, primary_key=True)
+    vacancy_id_in_agregator = Column(BigInteger)
     company_id = Column(BigInteger, ForeignKey('company.company_id'))
     job_title = Column(String)
     response_letter_required = Column(Boolean)

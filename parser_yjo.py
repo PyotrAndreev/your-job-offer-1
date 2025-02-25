@@ -1,18 +1,12 @@
 import requests
 from datetime import datetime, timedelta
-import pandas as pd
 import time
-import random
 import json
-import time
-import os
-import json
-import numpy as np
-import re
 from requests.exceptions import HTTPError, Timeout, ConnectionError
 from dataclasses import dataclass
 import logging
 import sys
+import socket
 
 from sqlalchemy.orm import sessionmaker
 from models import Vacancy as DB_Vacancy, engine
@@ -29,6 +23,7 @@ logger.setLevel(logging.INFO)
 class Vacancy:
     """Класс для хранения информации о вакансиях."""
     vacancy_id: int
+    vacancy_id_in_agregator: int
     job_title: str
     response_letter_required: bool = False
     country: str = ""
@@ -54,6 +49,7 @@ def create_vacancy(vacancy):
     # Создание новой вакансии
     new_vacancy = DB_Vacancy(
         vacancy_id=vacancy.vacancy_id,
+        vacancy_id_in_agregator=vacancy.vacancy_id_in_agregator,
         job_title=vacancy.job_title,
         response_letter_required=vacancy.response_letter_required,
         country=vacancy.country,
@@ -138,7 +134,7 @@ def get_hh_vacancies(start_date):
                       'per_page': 100}
             try:
                 hh_req = requests.get(hh_vacancies_url, params = params)
-            except (Timeout, ConnectionError):
+            except (Timeout, ConnectionError, ConnectionResetError):
                 if retries > 0:
                     retries -= 1
                     logger.warning("Ошибка соединения, повторная попытка через 20 секунд")
@@ -163,7 +159,8 @@ def get_hh_vacancies(start_date):
                     if j['archived'] == True:
                         continue
                     vacancy = Vacancy(
-                        vacancy_id = int(j['id']),
+                        vacancy_id = len(hh_vacancies) + 1,
+                        vacancy_id_in_agregator = int(j['id']),
                         job_title = j['name'],
                         response_letter_required = j['response_letter_required']
                     )
@@ -217,7 +214,7 @@ def get_sj_vacancies(start_date):
     sj_vacancies = []
     logger.info("Начинаем сбор вакансий с superjob.ru")
     while current_date.strftime("%Y-%m-%d") != datetime.today().strftime("%Y-%m-%d"):
-        logger.info(f"Собираем объекты вакасний за {str(current_date)[:10]}")
+        logger.info(f"Собираем объекты вакансий за {str(current_date)[:10]}")
         page = 0
         retries = 5
         while True:
@@ -302,6 +299,7 @@ avito_req = requests.get(avito_vacancies_url)
 get_hh_vacancies(datetime(2025, 2, 21))
 
 
-# конец запуска - Собираем объекты вакасний за 2024-11-26 00:00:00
+# конец запуска - Собираем объекты вакансий за 2025-02-23 12:00:00 - myDatabase.db (~70000 вакансий)
+# конец запуска - Собираем объекты вакансий за 2025-02-21 04:00:00 - myDatabase_mini.db (~1000 вакансий)
 
 session.close()
