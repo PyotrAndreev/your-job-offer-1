@@ -1,6 +1,6 @@
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
-from models import User, engine, Vacancy
+from models import User, engine, Vacancy, Resume
 import json
 # Создаем сессию
 Session = sessionmaker(bind=engine)
@@ -39,6 +39,10 @@ def get_all_vacancies():
 all_vacancies = get_all_vacancies()
 for vacancy in all_vacancies:
     print(vacancy.job_title)
+
+def get_resume(resume_id = 1):
+    resume = session.query(Resume).filter(Resume.resume_id == resume_id).first()
+    return resume
 
 
 session.close()
