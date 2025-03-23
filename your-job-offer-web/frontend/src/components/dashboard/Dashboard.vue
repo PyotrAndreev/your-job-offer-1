@@ -7,7 +7,7 @@
         <div class="card p-3 text-center shadow-sm">
           <h5 class="card-title">Progress</h5>
           <!-- <GChart type="AreaChart" :data="chartData" :options="chartOptions" /> -->
-          <PieChart />
+          <!-- <PieChart /> -->
         </div>
       </div>
 
@@ -49,7 +49,7 @@
         <div class="card p-3 shadow-sm text-center bg-white">
           <h5 class="card-title">Analytics</h5>
           <!-- <GChart type="LineChart" :data="chartData" :options="chartOptions" /> -->
-          <AreaChart />
+          <!-- <AreaChart /> -->
         </div>
       </div>
     </div>
@@ -108,14 +108,14 @@ import { store } from "../../script/store.js";
 </script>
 
 <script>
-import AreaChart from "./AreaChart.js";
-import PieChart from "./PieChart.js";
+// import AreaChart from "./AreaChart.js";
+// import PieChart from "./PieChart.js";
 
 export default {
-  components: {
-    AreaChart,
-    PieChart,
-  },
+  // components: {
+  //   AreaChart,
+  //   PieChart,
+  // },
   name: "Dashboard",
   methods: {
     incrementNumber() {

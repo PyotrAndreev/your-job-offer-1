@@ -33,7 +33,7 @@ app = FastAPI()
 # CORS Configuration (restrict origins for production)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173/"],  # Replace with your frontend URL put it in .env
+    allow_origins=["http://localhost:3000/"],  # Replace with your frontend URL put it in .env
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -128,9 +128,9 @@ async def dashboard(Authorize: AuthJWT = Depends()):
     current_user = Authorize.get_jwt_subject()
     return {"logged_in_as": current_user}
 
-@app.get("/hello")
-async def hello():
-    return "Hello!!"
+@app.get("/")
+async def entry():
+    return "Server is running"
 
 @app.post("/registration")
 async def registration(username: str, password: str):

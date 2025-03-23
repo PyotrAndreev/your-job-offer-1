@@ -3,7 +3,7 @@
   <nav class="navbar navbar-expand-lg navbar-light border-bottom border-2">
     <div class="container">
       <a class="navbar-brand fs-4 fw-normal" href="#home">
-        <img src="../assets/logo.svg" />
+        <img src="../assets/logotype.svg" />
       </a>
       <button
         class="navbar-toggler"
@@ -84,10 +84,15 @@
                 Заполните анкету для создания резюме или прикрепите свое
               </p>
               <div
-                class="preview-image mx-auto mb-2 border rounded-3 d-flex justify-content-center align-items-center"
+                class="preview-image mx-auto mb-2 border rounded-3 d-flex justify-content-center align-items-center bg-light"
+               
               >
-                <img src="../assets/1.svg" />
+
+              <img 
+              src="../assets/1.svg" style="height: 87%; width: 100%"/>
               </div>
+        
+
             </div>
           </div>
         </div>
@@ -106,9 +111,11 @@
                 получить
               </p>
               <div
-                class="preview-image mx-auto mb-2 border rounded-3 d-flex justify-content-center align-items-center"
+                class="preview-image mx-auto mb-2 border rounded-3 d-flex justify-content-center align-items-center bg-light"
+                  
               >
-                <img src="../assets/2.svg" />
+              <img 
+              src="../assets/2.svg" style="width: 85%;"/>
               </div>
             </div>
           </div>
@@ -128,9 +135,9 @@
                 вашей карьеры
               </p>
               <div
-                class="preview-image mx-auto mb-2 border rounded-3 d-flex justify-content-center align-items-center"
+                class="preview-image mx-auto mb-2 border rounded-3 d-flex justify-content-center align-items-center bg-light"
               >
-                <img src="../assets/3.svg" />
+                <img src="../assets/1.svg" style="height:85%; width:100%"/>
               </div>
             </div>
           </div>

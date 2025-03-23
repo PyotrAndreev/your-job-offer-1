@@ -33,7 +33,7 @@
           </div>
           <div class="row g-3 w-60 row-gap-2">
             <div class="col-md-12 justfiy-content-center">
-              <label for="upload" class="form-label fw-bold">Resume</label>
+              <label for="upload" class="form-label ">Resume</label>
               <input
                 class="form-control py-2 border-2"
                 type="file"
@@ -43,7 +43,7 @@
               />
             </div>
             <div class="col-md-6">
-              <label for="firstName" class="form-label fw-bold"
+              <label for="firstName" class="form-label "
                 >First Name</label
               >
               <input
@@ -56,7 +56,7 @@
               />
             </div>
             <div class="col-md-6">
-              <label for="lastName" class="form-label fw-bold">Last Name</label>
+              <label for="lastName" class="form-label ">Last Name</label>
               <input
                 v-model="formData.lastName"
                 type="text"
@@ -66,7 +66,7 @@
               />
             </div>
             <div class="col-md-6">
-              <label for="country" class="form-label fw-bold">Country</label>
+              <label for="country" class="form-label ">Country</label>
               <input
                 v-model="formData.country"
                 type="text"
@@ -76,7 +76,7 @@
               />
             </div>
             <div class="col-md-6">
-              <label for="education" class="form-label fw-bold">City</label>
+              <label for="education" class="form-label ">City</label>
               <input
                 v-model="formData.city"
                 type="text"
@@ -86,7 +86,7 @@
               />
             </div>
             <div class="col-md-6">
-              <label for="country" class="form-label fw-bold">Education</label>
+              <label for="country" class="form-label ">Education</label>
               <input
                 v-model="formData.education"
                 type="text"
@@ -96,7 +96,7 @@
               />
             </div>
             <div class="col-md-6">
-              <label for="education" class="form-label fw-bold">Position</label>
+              <label for="education" class="form-label ">Position</label>
               <input
                 v-model="formData.position"
                 type="text"
@@ -106,7 +106,7 @@
               />
             </div>
             <div class="col-md-6">
-              <label for="country" class="form-label fw-bold">Experience</label>
+              <label for="country" class="form-label ">Experience</label>
               <input
                 v-model="formData.experience"
                 type="text"
@@ -116,7 +116,7 @@
               />
             </div>
             <div class="col-md-6">
-              <label for="education" class="form-label fw-bold">Skills</label>
+              <label for="education" class="form-label ">Skills</label>
               <input
                 v-model="formData.skills"
                 type="text"
@@ -126,7 +126,7 @@
               />
             </div>
             <div class="col-md-6">
-              <label for="age" class="form-label fw-bold">Age</label>
+              <label for="age" class="form-label ">Age</label>
               <input
                 v-model="formData.age"
                 type="number"
@@ -136,7 +136,7 @@
               />
             </div>
             <div class="col-md-6">
-              <label for="gender" class="form-label fw-bold">Gender</label>
+              <label for="gender" class="form-label ">Gender</label>
               <select
                 v-model="formData.gender"
                 id="gender"
@@ -217,9 +217,10 @@ export default {
         const formData = new FormData();
         const resumeFile = document.getElementById("upload").files[0];
 
-        if (!resumeFile) {
-          alert("Please upload a resume.");
-          return;
+        if (resumeFile) {
+          console.log(2)
+          // alert("Please upload a resume.");
+          // return;
         }
 
         // Append data to FormData
@@ -270,37 +271,7 @@ export default {
       }
     },
 
-    // (Optional) Fetch user data from server
-    // async fetchUserData() {
-    //   if (!this.userId) return;
-
-    //   try {
-    //     const response = await axios.get(
-    //       `${store.baseUrl}userData/${this.userId}`
-    //     );
-
-    //     const data = response.data;
-
-    //     // Populate formData with fetched data
-    //     this.formData = {
-    //       firstName: data.first_name || "",
-    //       lastName: data.last_name || "",
-    //       country: data.country || "",
-    //       city: data.city || "",
-    //       education: data.education || "",
-    //       position: data.position || "",
-    //       experience: data.experience || "",
-    //       skills: data.skills || "",
-    //       age: data.age || "",
-    //       gender: data.gender || "",
-    //     };
-
-    //     console.log("Fetched user data:", data);
-    //   } catch (error) {
-    //     console.error("Error fetching user data:", error);
-    //     alert("Failed to load user data. Please try again.");
-    //   }
-    // },
+ 
   },
   mounted() {
     // Load saved data from localStorage

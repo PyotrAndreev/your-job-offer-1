@@ -71,7 +71,7 @@
       <h2 class="mb-4">Как все устроенно?</h2>
       <div class="row">
         <div class="col-md-4">
-          <div class="card border" style="height: 500px">
+          <div class="card border bg-light preview-image" style="height: 500px">
             <div class="card-body">
               <h5 class="card-title fw-bold">
                 Шаг
@@ -83,21 +83,20 @@
               <p class="card-text">
                 Заполните анкету для создания резюме или прикрепите свое
               </p>
-              <div
-                class="preview-image mx-auto mb-2 border rounded-3 d-flex justify-content-center align-items-center bg-light"
-               
-              >
+  
 
               <img 
-              src="../assets/1.svg" style="height: 87%; width: 100%"/>
-              </div>
+              src="../assets/1.svg" style="width: 100%; height: 350px"
+              class="rounded-3 mx-auto mb-2"
+              />
+  
         
 
             </div>
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card border" style="height: 500px">
+          <div class="card border bg-light preview-image" style="height: 500px">
             <div class="card-body">
               <h5 class="card-title fw-bold">
                 Шаг
@@ -110,19 +109,17 @@
                 Выберите количество карьерных предложений, которые хотите
                 получить
               </p>
-              <div
-                class="preview-image mx-auto mb-2 border rounded-3 d-flex justify-content-center align-items-center bg-light"
-                  
-              >
               <img 
-              src="../assets/2.svg" style="width: 85%;"/>
-              </div>
+              src="../assets/2.svg" style="width: 90%; height: 350px"
+              class="rounded-3 mx-auto mb-2"
+              />
             </div>
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card border">
-            <div class="card-body">
+          <div class="card border bg-light preview-image" style="height: 500px">
+            <div class="card-body"
+            >
               <h5 class="card-title fw-bold">
                 Шаг
                 <font-awesome-icon
@@ -134,11 +131,10 @@
                 Сервис автоматически выберет лучшие возможности для развития
                 вашей карьеры
               </p>
-              <div
-                class="preview-image mx-auto mb-2 border rounded-3 d-flex justify-content-center align-items-center bg-light"
-              >
-                <img src="../assets/1.svg" style="height:85%; width:100%"/>
-              </div>
+              <img 
+              src="../assets/3.svg" style="width: 100%; height: 350px"
+              class="rounded-3 mx-auto mb-2"
+              />
             </div>
           </div>
         </div>
@@ -286,10 +282,8 @@ export default {
   padding: 40px 0;
 }
 .preview-image {
-  height: 350px;
-  width: 80%;
   transition: all 0.3s ease-in-out;
-  color: #495057;
+  /* color: #495057; */
 }
 
 .preview-image:hover {

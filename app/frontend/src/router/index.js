@@ -1,18 +1,12 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
-import HelloWorld from '../components/HelloWorld.vue'
+import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../components/HomePage.vue';
 import Registration from '../components/Registration.vue';
 import Login from '../components/Login.vue'
-import Dashboard from '@/components/dashboard/Main.vue';
+import Dashboard from '../components/dashboard/Main.vue';
 
 const routes = [
   {
-    path: '/hello',
-    name: 'HelloWorld',
-    component: HelloWorld,
-  },
-  {
-    path: '/home',
+    path: '/',
     name: 'HomePage',
     component: HomePage,
   },
@@ -36,7 +30,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes
 })
 

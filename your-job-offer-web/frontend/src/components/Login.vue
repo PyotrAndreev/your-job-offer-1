@@ -57,31 +57,34 @@ export default {
   },
   methods: {
     async login() {
-      if (this.username && this.password) {
-        const path = "http://127.0.0.1:5000/login";
-        let msg = "";
-        await axios
-          .post(path, {
-            username: this.username,
-            password: this.password,
-          })
-          .then(function (response) {
-            if (response.data.access_token) {
-              localStorage.setItem("token", response.data.access_token);
-            }
-          })
-          .catch(function (err) {
-            console.log(err);
-            msg = err.response.data.msg;
-          });
-        if (msg === "") {
-          this.$router.replace({ path: "/dashboard" });
-        }
-        this.errorMessage = msg;
-        console.log(this.errorMessage);
-      } else {
-        this.errorMessage = "Please fill in all fields";
-      }
+      // console.log(123)
+      this.$router.replace({ path: "/dashboard" });
+
+      // if (this.username && this.password) {
+      //   const path = "http://127.0.0.1:5000/login";
+      //   let msg = "";
+      //   await axios
+      //     .post(path, {
+      //       username: this.username,
+      //       password: this.password,
+      //     })
+      //     .then(function (response) {
+      //       if (response.data.access_token) {
+      //         localStorage.setItem("token", response.data.access_token);
+      //       }
+      //     })
+      //     .catch(function (err) {
+      //       console.log(err);
+      //       msg = err.response.data.msg;
+      //     });
+      //   if (msg === "") {
+      //     this.$router.replace({ path: "/dashboard" });
+      //   }
+      //   this.errorMessage = msg;
+      //   console.log(this.errorMessage);
+      // } else {
+      //   this.errorMessage = "Please fill in all fields";
+      // }
     },
   },
 };
