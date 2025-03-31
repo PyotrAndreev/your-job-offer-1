@@ -58,7 +58,7 @@
       <p class="lead fs-4 my-3">
         Сервис для автоматического поиска вакансий и стажировок
       </p>
-      <a href="#registration" class="btn btn-primary btn-lg">Начать сейчас</a>
+      <a href="#registration" class="btn btn-primary btn-lg mt-3">Начать сейчас</a>
     </div>
   </div>
 
