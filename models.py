@@ -19,6 +19,7 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)  # Добавлено поле created_at
 
     resumes = relationship("Resume", back_populates="user")
+    tokens = relationship("Tokens", back_populates="user")
 
     def __repr__(self):
         return f"<User(user_id={self.user_id}, name={self.name}, email={self.email}, phone={self.phone}, created_at={self.created_at})>"
@@ -93,6 +94,19 @@ class Resume(Base):
 
     def __repr__(self):
         return f"<Resume(resume_id={self.resume_id}, title={self.title}, job_title={self.job_title}, user_id={self.user_id}, created_at={self.created_at})>"
+
+class Tokens(Base):
+    __tablename__ = 'tokens'
+
+    tokens_id = Column(Integer, primary_key=True)
+    user_id = Column(BigInteger, ForeignKey('user.user_id'))
+    refresh_token = Column(String)
+    access_token = Column(String)
+
+    user = relationship("User", back_populates="tokens")
+
+    def __repr__(self):
+        return f"<Tokens(tokens_id={self.tokens_id}, user_id={self.user_id}, refresh_token={self.refresh_token}, access_token={self.access_token})>"
 
 class Submission(Base):
     __tablename__ = 'submission'
