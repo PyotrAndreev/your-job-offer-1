@@ -5,6 +5,8 @@ from sqlalchemy.orm import sessionmaker
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
+
+from matcher import vacancies, match_vacancies
 from models import Base, User, Company, Vacancy, Resume, Submission
 
 # Создание базы данных
@@ -66,6 +68,17 @@ class VacancyCreate(BaseModel):
     work_schedule_weekend: int
     experience: dict
     remote_work: bool
+
+class TokensCreate(BaseModel):
+    user_id: int
+    refresh_token: str
+    access_token: str
+
+class TokensResponse(TokensCreate):
+    tokens_id: int
+
+    class Config:
+        orm_mode = True
 
 class VacancyResponse(VacancyCreate):
     vacancy_id: int
@@ -214,6 +227,14 @@ def read_submission(submission_id: int, db: Session = Depends(get_db)):
     if submission is None:
         raise HTTPException(status_code=404, detail="Submission not found")
     return submission
+
+@app.get("/vacancies/{user_id}", response_model=List[VacancyResponse])
+def get_recommended_vacancies_for_user(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.user_id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    res_vacancies = match_vacancies(vacancies, user_id)
+    return res_vacancies
 
 # Запуск приложения можно осуществить с помощью команды:
 # uvicorn main:app --reload
