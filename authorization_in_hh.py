@@ -1,14 +1,11 @@
-from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from pydantic import BaseModel
-from uuid import uuid4
 from pathlib import Path
 from passlib.context import CryptContext
 from flask import Flask, redirect, request, session
 import requests
-from fastapi import FastAPI
-from create_users import get_last_tokens_id, add_tokens
+from fastapi import FastAPI, HTTPException, Depends
+from create_users import add_tokens
 
 load_dotenv()
 
@@ -39,7 +36,7 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 
 
-@app.get("/authorize_in_hh")
+@app.get("/authorize_in_hh/{user_id}")
 def authorize_in_hh():
     client_id = "GES2OLI3SIBO9IEP71CQNM9P35M6FRG29SGD1JFICCRI2P2PQD6F5SBFQHLDO3LD"
     # мб надо поправить redirect_uri
@@ -48,8 +45,8 @@ def authorize_in_hh():
     auth_url = f"https://hh.ru/oauth/authorize?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}&scope={scope}"
     return redirect(auth_url)
 
-@app.route("/callback?code")
-def callback():
+@app.route("/callback/{user_id}?code")
+def callback(user_id):
     authorization_code = request.args.get("code")
     if not authorization_code:
         raise HTTPException(status_code=400, detail="Authorization code had not been received")
@@ -71,8 +68,7 @@ def callback():
     else:
         token_data = token_response.json()
         session["access_token"] = token_data["access_token"]
-        session["refresh_token"] = token_data.get("refresh_token", "")
-        # надо как-то вытащить user_id???
-        #add_tokens(get_last_tokens_id() + 1, user_id, token_data["access_token"], token_data.get("refresh_token", ""))
+        session["refresh_token"] = token_data["refresh_token"]
+        add_tokens(user_id, token_data["refresh_token"], token_data["access_token"])
         return redirect("/dashboard")
 
