@@ -1,19 +1,22 @@
-from sqlalchemy import Column, Integer, BigInteger, String, Boolean, DateTime, ForeignKey, JSON, create_engine, ARRAY
+from sqlalchemy import Column, JSON, Integer, BigInteger, String, Boolean, DateTime, ForeignKey, JSON, create_engine, ARRAY
 from sqlalchemy.orm import relationship, sessionmaker, declarative_base
 from datetime import datetime
+import json
 
 # Создание базового класса для моделей
 Base = declarative_base()
 
 # Определение URL базы данных
-DATABASE_URL = 'sqlite:///myDatabase_mini.db'
+DATABASE_URL = 'sqlite:///Database.db'
 engine = create_engine(DATABASE_URL)
 
 class User(Base):
     __tablename__ = 'user'
 
-    user_id = Column(BigInteger, primary_key=True)
+    user_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
+    sex = Column(String)
+    age = Column(Integer)
     email = Column(String)
     phone = Column(BigInteger)
     created_at = Column(DateTime, default=datetime.utcnow)  # Добавлено поле created_at
@@ -22,37 +25,33 @@ class User(Base):
     tokens = relationship("Tokens", back_populates="user")
 
     def __repr__(self):
-        return f"<User(user_id={self.user_id}, name={self.name}, email={self.email}, phone={self.phone}, created_at={self.created_at})>"
+        return f"<User(user_id={self.user_id}, name={self.name}, sex={self.sex}, age={self.age}, email={self.email}, phone={self.phone}, created_at={self.created_at})>"
 
-class Company(Base):
-    __tablename__ = 'company'
+class Updates(Base):
+    __tablename__ = 'updates'
 
-    company_id = Column(BigInteger, primary_key=True)
-    company_title = Column(String)
-    phone = Column(BigInteger)  # Контактный номер
-    email = Column(String)  # Контактный email
-    company_type = Column(String)
-    description = Column(String)
-    website = Column(String)
-    created_at = Column(DateTime, default=datetime.utcnow)  # Добавлено поле created_at
-
-    # vacancies = relationship("Vacancy", back_populates="company")
+    update_id = Column(Integer, primary_key=True, autoincrement=True)
+    agregator = Column(String)
+    updated_at = Column(DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return f"<Company(company_id={self.company_id}, company_title={self.company_title}, phone={self.phone}, email={self.email}, created_at={self.created_at})>"
+        return f"<Updates(update_id={self.update_id}, agregator={self.agregator}, updated_at={self.updated_at})>"
 
 class Vacancy(Base):
     __tablename__ = 'vacancy'
 
-    vacancy_id = Column(BigInteger, primary_key=True)
-    vacancy_id_in_agregator = Column(BigInteger)
-    company_id = Column(BigInteger, ForeignKey('company.company_id'))
+    vacancy_id = Column(Integer, primary_key=True, autoincrement=True)
+    vacancy_id_in_hh = Column(BigInteger)
+    vacancy_id_in_hc = Column(BigInteger)
+    vacancy_id_in_sj = Column(BigInteger)
+    vacancy_id_in_zp = Column(BigInteger)
     job_title = Column(String)
     response_letter_required = Column(Boolean)
     country = Column(String)
     city = Column(String)
     district = Column(String)
     salary = Column(String)
+    created_at = Column(DateTime, default=datetime.utcnow)
     office_address = Column(String)
     subway_station = Column(String)
     employer_information = Column(String)
@@ -61,24 +60,23 @@ class Vacancy(Base):
     work_schedule_time_intervals = Column(String)
     experience = Column(String)
     remote_work = Column(Boolean)
-    created_at = Column(DateTime, default=datetime.utcnow)  # Добавлено поле created_at
+    created_at = Column(DateTime, default=datetime.utcnow)
 
-    # company = relationship("Company", back_populates="vacancies")
     submissions = relationship("Submission", back_populates="vacancy")
 
     def __repr__(self):
-        return f"<Vacancy(vacancy_id={self.vacancy_id}, job_title={self.job_title}, salary={self.salary}, company_id={self.company_id}, created_at={self.created_at})>"
+        return f"<Vacancy(vacancy_id={self.vacancy_id}, job_title={self.job_title}, created_at={self.created_at})>"
 
 class Resume(Base):
     __tablename__ = 'resume'
 
-    resume_id = Column(Integer, primary_key=True)
+    resume_id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(BigInteger, ForeignKey('user.user_id'))
     title = Column(String)
     job_title = Column(String)
     country = Column(String)
     city = Column(String)
-    district = Column(JSON)
+    district = Column(String)
     min_salary = Column(BigInteger)
     max_salary = Column(BigInteger)
     work_schedule_working_days = Column(String)
@@ -86,8 +84,15 @@ class Resume(Base):
     experience = Column(String)
     remote_work = Column(Boolean)
     education = Column(String)
-    additional_information = Column(String)
-    created_at = Column(DateTime, default=datetime.utcnow)  # Добавлено поле created_at
+    skills = Column(JSON)
+    @property
+    def skills_list(self):
+        return json.loads(self.skills) if self.skills else []
+
+    @skills_list.setter
+    def skills_list(self, value):
+        self.skills = json.dumps(value)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="resumes")
     submissions = relationship("Submission", back_populates="resume")
@@ -98,7 +103,7 @@ class Resume(Base):
 class Tokens(Base):
     __tablename__ = 'tokens'
 
-    tokens_id = Column(Integer, primary_key=True)
+    tokens_id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(BigInteger, ForeignKey('user.user_id'))
     refresh_token = Column(String)
     access_token = Column(String)
@@ -110,12 +115,12 @@ class Tokens(Base):
 
 class Submission(Base):
     __tablename__ = 'submission'
-    submission_id = Column(BigInteger, primary_key=True)
+    submission_id = Column(Integer, primary_key=True, autoincrement=True)
     resume_id = Column(BigInteger, ForeignKey('resume.resume_id'))
     status = Column(String)
     sent_at = Column(DateTime)
     vacancy_id = Column(BigInteger, ForeignKey('vacancy.vacancy_id'))
-    created_at = Column(DateTime, default=datetime.utcnow)  # Добавлено поле created_at
+    created_at = Column(DateTime, default=datetime.utcnow)
 
     resume = relationship("Resume", back_populates="submissions")
     vacancy = relationship("Vacancy", back_populates="submissions")
@@ -123,5 +128,4 @@ class Submission(Base):
     def __repr__(self):
         return f"<Submission(submission_id={self.submission_id}, resume_id={self.resume_id}, vacancy_id={self.vacancy_id}, status={self.status}, created_at={self.created_at})>"
 
-# Создание всех таблиц
 Base.metadata.create_all(engine)
