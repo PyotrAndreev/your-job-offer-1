@@ -5,31 +5,33 @@ import json
 from requests.exceptions import HTTPError, Timeout, ConnectionError
 from dataclasses import dataclass
 import logging
-import sys
-import socket
 
 from sqlalchemy.orm import sessionmaker
 from models import Vacancy as DB_Vacancy, engine
+from updating_bd import update_time, get_last_update
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-# vacancy_id, job title - title, response_letter_required, country, city,
-# district, salary - salary, office address - adress, subway station, employer information,
-# requirements, work schedule - schedule, experience, remote work   +    archieve - is_active
+## айдишник hh - 1
+## айдишник hc - 2
+## айдишник sj - 3
+## айдишник zp - 4
 
 @dataclass
 class Vacancy:
     """Класс для хранения информации о вакансиях."""
-    vacancy_id: int
-    vacancy_id_in_agregator: int
     job_title: str
+    vacancy_id_in_hh: int = 0
+    vacancy_id_in_hc: int = 0
+    vacancy_id_in_sj: int = 0
+    vacancy_id_in_zp: int = 0
     response_letter_required: bool = False
     country: str = ""
     city: str = ""
     district: str = ""
-    salary: list = None
+    salary: str = None
     office_address: str = ""
     subway_station: str = ""
     employer_information: str = ""
@@ -48,8 +50,10 @@ session = Session()
 def create_vacancy(vacancy):
     # Создание новой вакансии
     new_vacancy = DB_Vacancy(
-        vacancy_id=vacancy.vacancy_id,
-        vacancy_id_in_agregator=vacancy.vacancy_id_in_agregator,
+        vacancy_id_in_hh=vacancy.vacancy_id_in_hh,
+        vacancy_id_in_hc=vacancy.vacancy_id_in_hc,
+        vacancy_id_in_sj=vacancy.vacancy_id_in_sj,
+        vacancy_id_in_zp=vacancy.vacancy_id_in_zp,
         job_title=vacancy.job_title,
         response_letter_required=vacancy.response_letter_required,
         country=vacancy.country,
@@ -87,14 +91,14 @@ def getAreas():
         for i in range(len(k['areas'])):
             if len(k['areas'][i]['areas']) != 0:
                 for j in range(len(k['areas'][i]['areas'])):
-                    areas.append([k['id'], 
-                                  k['name'], 
+                    areas.append([k['id'],
+                                  k['name'],
                                   k['areas'][i]['areas'][j]['id'],
                                   k['areas'][i]['areas'][j]['name']])
             else:
-                areas.append([k['id'], 
-                              k['name'], 
-                              k['areas'][i]['id'], 
+                areas.append([k['id'],
+                              k['name'],
+                              k['areas'][i]['id'],
                               k['areas'][i]['name']])
     return areas
 
@@ -159,8 +163,7 @@ def get_hh_vacancies(start_date):
                     if j['archived'] == True:
                         continue
                     vacancy = Vacancy(
-                        vacancy_id = len(hh_vacancies) + 1,
-                        vacancy_id_in_agregator = int(j['id']),
+                        vacancy_id_in_hh = int(j['id']),
                         job_title = j['name'],
                         response_letter_required = j['response_letter_required']
                     )
@@ -181,18 +184,19 @@ def get_hh_vacancies(start_date):
                             vacancy.subway_station = j['address']['metro']['station_name']
                     if j['experience'] != None:
                         vacancy.experience = j['experience']['name']
-                    salary_from = None
-                    salary_to = None
-                    currency = None
+                    salary_from = "?"
+                    salary_to = "?"
+                    currency = "?"
                     if not ((j['salary'] is None) or (j['salary']['from'] is None)):
                         if not j['salary']['from'] == None:
                             salary_from = j['salary']['from']
                         if not j['salary']['to'] == None:
                             salary_to = j['salary']['to']
                         currency = j['salary']['currency']
-                    vacancy.salary = [salary_from, salary_to, currency]
+                    vacancy.salary = str(salary_from) + " " +str(salary_to) + " " + str(currency)
                     hh_vacancies.append(vacancy)
                     create_vacancy(vacancy)
+                    update_time(1, datetime.utcnow())
                     file.write(str(j['published_at']) + ": " + str(vacancy) + '\n' + '\n')
                 logger.info(f"Текущее количество собранных c hh.ru вакансий: {len(hh_vacancies)}")
             time.sleep(3)
@@ -203,8 +207,6 @@ def get_hh_vacancies(start_date):
 
 file_handler = logging.FileHandler('sj_vacancies', mode='w', encoding='utf-8')
 logger.addHandler(file_handler)
-stream_handler = logging.StreamHandler(stream=sys.stdout)
-logger.addHandler(stream_handler)
 
 def get_sj_vacancies(start_date):
     """ Получение списка вакансий с сайта Superjob начиная с указанной даты до текущего дня.
@@ -220,11 +222,11 @@ def get_sj_vacancies(start_date):
         while True:
             logger.info(f"Текущая страница: {page}")
             params = {"date_published_from": str(int(current_date.timestamp())),
-                      "date_published_to": str(int((timedelta(days=1) + current_date).timestamp())),
+                      "date_published_to": str(int((timedelta(hours=1) + current_date).timestamp())),
                       'page': page,
                       'per_page': 100}
             try:
-                sj_req = requests.get(sj_vacancies_url, params = params, headers = headers)
+                sj_req = requests.get(sj_vacancies_url, params = params, headers = sj_headers)
             except (Timeout, ConnectionError):
                 if retries > 0:
                     retries -= 1
@@ -251,19 +253,25 @@ def get_sj_vacancies(start_date):
                     if j['is_archive'] == True or j['is_closed'] == True or j['is_storage'] == True:
                         continue
                     vacancy = Vacancy(
-                        vacancy_id = j['id'],
+                        vacancy_id_in_sj = j['id'],
                         job_title = j['profession'],
                         office_address = j['address']
                     )
-                    salary_from = j['payment_from']
-                    salary_to = j['payment_to']
-                    currency = j['currency']
-                    vacancy.salary = [salary_from, salary_to, currency]
+                    salary_from = "?"
+                    salary_to = "?"
+                    currency = "?"
+                    if not j['payment_from'] == None:
+                        salary_from = j['payment_from']
+                    if not j['payment_to'] == None:
+                        salary_to = j['payment_to']
+                    if not j['currency'] == None:
+                        currency = j['currency']
+                    vacancy.salary = str(salary_from) + " " +str(salary_to) + " " + str(currency)
                     if j['experience'] != None:
                         vacancy.experience = j['experience']['title']
                     if j['town'] != None:
                         vacancy.city = j['town']['title']
-                    vacancy.employer_information = j['firm_name']    
+                    vacancy.employer_information = j['firm_name']
                     vacancy.requirements = j['candidat']
                     vacancy.subway_station = j['metro']
                     if j['type_of_work'] != None:
@@ -272,6 +280,8 @@ def get_sj_vacancies(start_date):
                         if j['place_of_work']['title'] == 'Удалённая работа (на дому)':
                             vacancy.remote_work = True
                     sj_vacancies.append(vacancy)
+                    create_vacancy(vacancy)
+                    update_time(3, datetime.utcnow)
                 logger.info(f"Текущее количество собранных с superjob.ru вакансий: {len(sj_vacancies)}")
                 #time.sleep(5)
             page += 1
@@ -279,27 +289,104 @@ def get_sj_vacancies(start_date):
     logger.info("Сбор вакансий с superjob.ru завершён")
     return sj_vacancies
 
+file_handler = logging.FileHandler('hc_vacancies', mode='w', encoding='utf-8')
+logger.addHandler(file_handler)
+
+def get_hc_vacancies(start_date):
+    """ Получение списка вакансий с сайта Habr карьера начиная с указанной даты до текущего дня.
+    :param start_date: Начальная дата поиска вакансий. :type start_date: datetime
+    :return: Список объектов типа Vacancy. :rtype: list """
+    current_date = start_date
+    hc_vacancies = []
+    logger.info("Начинаем сбор вакансий с career.habr.ru")
+    while current_date.strftime("%Y-%m-%d") != datetime.today().strftime("%Y-%m-%d"):
+        logger.info(f"Собираем объекты вакансий за {str(current_date)[:10]}")
+        page = 0
+        retries = 5
+        while True:
+            logger.info(f"Текущая страница: {page}")
+            params = {"date_published_from": str(int(current_date.timestamp())),
+                      "date_published_to": str(int((timedelta(days=1) + current_date).timestamp())),
+                      'page': page,
+                      'per_page': 100}
+            try:
+                hc_req = requests.get(hc_vacancies_url, params = params)
+            except (Timeout, ConnectionError):
+                if retries > 0:
+                    retries -= 1
+                    logger.warning("Ошибка соединения, повторная попытка через 20 секунд")
+                    time.sleep(20)
+                else:
+                    logger.error("Повторное соединение не удалось, переходим к следующему запросу")
+                    break
+            except HTTPError as exc:
+                if exc.response.status_code == 429:
+                    logger.warning("Превышено допустимое число запросов, задержка 20 секунд")
+                    time.sleep(20)
+                    continue
+                logger.error(f"Ошибка {exc.response.status_code}")
+                break
+            else:
+                try:
+                    hc_req_json = hc_req.json()
+                except json.JSONDecodeError as e:
+                    print("Ошибка декодирования JSON:", e)
+                    break
+
+                try:
+                    hc_req_json['vacancies']
+                except KeyError:
+                    print("err KeyErr")
+                    break
+                for j in hc_req_json['vacancies']:
+                    if j['published'] == False:
+                        continue
+                    vacancy = Vacancy(
+                        vacancy_id_in_hc=j['id'],
+                        job_title = j['title']
+                    )
+                    if j['expanded_salary']:
+                        salary_from = j['expanded_salary']['from']
+                        salary_to = j['expanded_salary']['to']
+                        currency = j['expanded_salary']['currency']
+                        vacancy.salary = [salary_from, salary_to, currency]
+                    vacancy.experience = j['candidate']
+                    vacancy.city = j['city']
+                    if j['company'] != None:
+                        vacancy.employer_information = j['company']['name']
+                    if j['team'] != None:
+                        vacancy.employer_information = j['team']
+                    req = ""
+                    if j['skills'] != None:
+                        for skill in j['skills']:
+                            req += (skill['name'])
+                    vacancy.requirements = req
+                    vacancy.remote_work = j['remote']
+                    hc_vacancies.append(vacancy)
+                    create_vacancy(vacancy)
+                    update_time(2, datetime.utcnow)
+                logger.info(f"Текущее количество собранных с career.habr.ru вакансий: {len(hc_vacancies)}")
+                #time.sleep(5)
+            page += 1
+        current_date += timedelta(days=1)
+    logger.info("Сбор вакансий с career.habr.ru завершён")
+    return hc_vacancies
+
 zarplata_vacancies_url = "https://api.zarplata.ru/vacancies"
-hh_vacancies_url = "https://api.hh.ru/vacancies"
-avito_vacancies_url = "https://api.avito.ru/job/v2/vacancies"
+hh_vacancies_url = "https://api.hh.ru/vacancies/"
 sj_vacancies_url = "https://api.superjob.ru/2.0/vacancies/"
+hc_vacancies_url = "https://career.habr.com/api/v1/vacancies"
 
 
-headers = {'X-Api-App-Id' : 'v3.r.138675629.1b08282275f198c10779eb794c1e45919b231c2b.f7d459dd38d21c4693828ee2248cc1128d62e5f1',
+sj_headers = {'X-Api-App-Id' : 'v3.r.138675629.1b08282275f198c10779eb794c1e45919b231c2b.f7d459dd38d21c4693828ee2248cc1128d62e5f1',
           'Content-Type': 'application / x - www - form - urlencoded'}
 
 
-sj_req = requests.get(sj_vacancies_url, headers=headers)
+sj_req = requests.get(sj_vacancies_url, headers=sj_headers)
 zarplata_req = requests.get(zarplata_vacancies_url)
 hh_req = requests.get(hh_vacancies_url)
-avito_req = requests.get(avito_vacancies_url)
 
-#print(len(get_hh_vacancies(datetime(2010, 1, 1))))
+get_hh_vacancies(datetime(2025, 4, 17))
 
-get_hh_vacancies(datetime(2025, 2, 21))
-
-
-# конец запуска - Собираем объекты вакансий за 2025-02-23 12:00:00 - myDatabase.db (~70000 вакансий)
-# конец запуска - Собираем объекты вакансий за 2025-02-21 04:00:00 - myDatabase_mini.db (~1000 вакансий)
 
 session.close()
