@@ -1,23 +1,19 @@
 <template>
-  <nav class="navbar navbar-light border-bottom">
-    <div class="container-fluid">
-      <form class="d-flex">
-        <input
-          class="form-control me-2 mx-2"
-          type="search"
-          placeholder="Search applications"
-          aria-label="Search"
-        />
-        <button class="btn border-0" type="submit">
-          <font-awesome-icon
-            :icon="['fas', 'magnifying-glass']"
-            style="color: #212529"
-          />
-        </button>
-      </form>
-      <div class="dropdown nav-item mx-5">
+  <nav class="navbar navbar-light border-bottom bg-white shadow-sm">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <!-- Styled like a button -->
+      <a
+        href="./"
+        class="btn d-flex align-items-center gap-2 ms-3"
+      >
+        <font-awesome-icon :icon="['fas', 'house']" style="color: #0d6efd"/>
+        <span>Your job offer</span>
+      </a>
+
+      <!-- Styled Dropdown -->
+      <div class="dropdown nav-item me-3">
         <button
-          class="btn dropdown-toggle border-0"
+          class="btn dropdown-toggle border rounded-pill border"
           type="button"
           id="dropdownMenuButton1"
           data-bs-toggle="dropdown"
@@ -25,10 +21,19 @@
         >
           {{ userName }}
         </button>
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-          <li><a class="dropdown-item" href="#home">Return to main</a></li>
+        <ul
+          class="dropdown-menu dropdown-menu-end shadow rounded"
+          aria-labelledby="dropdownMenuButton1"
+        >
           <li>
-            <a class="dropdown-item" href="#home#features">See our fetures</a>
+            <a class="dropdown-item" href="/">
+              <i class="fas fa-arrow-left me-2"></i>Return to main
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="/#features">
+              <i class="fas fa-star me-2"></i>See our features
+            </a>
           </li>
         </ul>
       </div>
@@ -58,7 +63,19 @@ export default {
 </script>
 
 <style scoped>
-button:hover {
-  background-color: #e9ecef;
+.navbar {
+  height: 60px;
+}
+
+.btn {
+  transition: background-color 0.2s ease-in-out, box-shadow 0.2s;
+}
+
+.btn:hover {
+  background-color: #f8f9fa;
+}
+
+.dropdown-menu a.dropdown-item:hover {
+  background-color: #f8f9fa;
 }
 </style>

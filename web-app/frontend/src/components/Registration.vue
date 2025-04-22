@@ -54,7 +54,7 @@
           <div class="mt-3 text-center">
             <span>
               Уже есть аккаунт?
-              <a class="px-1 text-decoration-none" href="#login">Войти</a>
+              <a class="px-1 text-decoration-none" href="login">Войти</a>
             </span>
           </div>
           <div v-if="errorMessage" class="alert alert-danger mt-3">

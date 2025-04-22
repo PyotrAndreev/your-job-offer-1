@@ -9,7 +9,7 @@
     id="sidebar"
   >
     <!-- Toggle Button -->
-    <div class="text-center py-3 border-bottom" @click="toggleSidebar">
+    <div class="text-center border-bottom toggle" @click="toggleSidebar">
       <font-awesome-icon :icon="['fas', 'bars']" />
     </div>
 
@@ -19,13 +19,15 @@
         <li class="nav-item py-1">
           <button
             class="btn btn-link text-start w-100 text-dark text-decoration-none"
+            @click="changeTab('dashboard')"
             :class="{
               active: activeTab === 'dashboard',
-              'border-start border-primary': activeTab === 'dashboard',
             }"
-            @click="changeTab('dashboard')"
           >
-            <font-awesome-icon :icon="['fas', 'briefcase']" />
+            <font-awesome-icon :icon="['fas', 'briefcase']" 
+            :class="{
+              'color': activeTab === 'dashboard',
+            }"/>
             <span v-if="!isCollapsed" class="px-2">Dashboard</span>
           </button>
         </li>
@@ -34,11 +36,14 @@
             class="btn btn-link text-start w-100 text-dark text-decoration-none"
             :class="{
               active: activeTab === 'resume',
-              'border-start border-primary': activeTab === 'resume',
+              '': activeTab === 'resume',
             }"
             @click="changeTab('resume')"
           >
-            <font-awesome-icon :icon="['fas', 'user']" />
+            <font-awesome-icon :icon="['fas', 'user']" 
+            :class="{
+              'color': activeTab === 'resume',
+            }"/>
             <span v-if="!isCollapsed" class="px-2">About me</span>
           </button>
         </li>
@@ -47,11 +52,14 @@
             class="btn btn-link text-start w-100 text-dark text-decoration-none"
             :class="{
               active: activeTab === 'applications',
-              'border-start border-primary': activeTab === 'applications',
+              '': activeTab === 'applications',
             }"
             @click="changeTab('applications')"
           >
-            <font-awesome-icon :icon="['fas', 'file']" />
+            <font-awesome-icon :icon="['fas', 'file']" 
+            :class="{
+              'color': activeTab === 'applications',
+            }"/>
             <span v-if="!isCollapsed" class="px-2">Applications</span>
           </button>
         </li>
@@ -66,7 +74,7 @@ export default {
   props: ["activeTab"],
   data() {
     return {
-      isCollapsed: false, // Default state is expanded
+      isCollapsed: true, // Default state is expanded
     };
   },
   methods: {
@@ -89,26 +97,27 @@ export default {
   padding: 0.5rem; /* Ensure padding for spacing */
 }
 
-#sidebar .nav-item button.border-start {
-  border-left-width: 3px !important; /* Add custom left border */
+/* #sidebar .nav-item button.border-start {
+  border-left-width: 3px !important; 
 }
 
 #sidebar .nav-item button.border-primary {
-  border-color: #0d6efd !important; /* Use Bootstrap's primary color */
+  border-color: #0d6efd !important;
   border-radius: 0;
-}
+} */
 
 button.active {
-  font-weight: bold;
+  background-color: #f8f9fa;
+    /* font-weight: bold; */
 }
 
-button.border-start {
-  border-left-width: 4px !important; /* Make the border prominent */
-}
+/* button.border-start {
+  border-left-width: 4px !important; 
+} */
 
-button.border-primary {
-  border-color: #0d6efd !important; /* Use Bootstrap's primary color */
-}
+/* button.border-primary {
+  border-color: #0d6efd !important; 
+} */
 
 #sidebar .nav-item button span {
   transition: opacity 0.3s ease;
@@ -117,4 +126,14 @@ button.border-primary {
 #sidebar.collapsed .nav-item button span {
   opacity: 0;
 }
+
+.toggle {
+  height: 60px;
+  padding: 20px;  
+}
+
+.color {
+  color: #0d6efd;
+}
+
 </style>

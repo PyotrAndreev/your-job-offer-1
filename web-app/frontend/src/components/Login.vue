@@ -30,7 +30,7 @@
           <div class="mt-3 text-center">
             <span>
               Нет аккаунта?
-              <a class="px-1 text-decoration-none" href="#registration">
+              <a class="px-1 text-decoration-none" href="registration">
                 Зарегистрироваться
               </a>
             </span>
