@@ -182,12 +182,11 @@ export default {
     <!-- Mode Toggle Section -->
     <div class="bg-white rounded-4 border p-4 p-md-5 mb-5 shadow-sm">
       <div class="d-flex flex-column align-items-center mb-4 gap-3">
-        <div class="d-flex align-items-center gap-3 flex-wrap position-relative justify-content-center">
+        <div class="d-flex align-items-center gap-3 flex-wrap justify-content-center position-relative">
           <span class="fw-semibold">Режим подбора:</span>
 
-          <div class="btn-group" role="group">
+          <div class="d-flex gap-2">
             <button
-              type="button"
               class="btn"
               :class="isAutoMode ? 'btn-outline-secondary' : 'btn-primary'"
               @click="isAutoMode = false"
@@ -195,7 +194,6 @@ export default {
               Ручной
             </button>
             <button
-              type="button"
               class="btn"
               :class="isAutoMode ? 'btn-primary' : 'btn-outline-secondary'"
               @click="isAutoMode = true"
@@ -207,18 +205,14 @@ export default {
           <!-- Tooltip -->
           <font-awesome-icon
             icon="question-circle"
-            class="text-muted ms-2 cursor-pointer"
+            class="text-muted ms-2"
+            style="width: 20px; height: 20px; cursor: pointer"
             @mouseenter="showTooltip = true"
             @mouseleave="showTooltip = false"
           />
-          <transition name="fade">
-            <div
-              v-if="showTooltip"
-              class="tooltip-custom"
-            >
-              В ручном режиме вы выбираете понравившиеся вакансии. В авто — система ищет их за вас.
-            </div>
-          </transition>
+          <div v-if="showTooltip" class="tooltip-custom">
+            В ручном режиме вы выбираете понравившиеся вакансии. В авто — система ищет их за вас.
+          </div>
         </div>
       </div>
 
@@ -259,13 +253,10 @@ export default {
         </div>
       </div>
 
-      <!-- Auto Mode Table or Number of Offers -->
-      <div v-if="isAutoMode" class="mt-5">
-        <div v-if="offers.length">
-          <h5 class="text-center">Найдено {{ offers.length }} из {{ number }} вакансий</h5>
-        </div>
-
-        <div v-if="offers.length" class="table-responsive mt-4">
+      <!-- Auto Mode Table -->
+      <div v-if="isAutoMode && offers.length" class="mt-5">
+        <h5 class="text-center">Найдено {{ offers.length }} из {{ number }} вакансий</h5>
+        <div class="table-responsive mt-4">
           <table class="table table-bordered table-hover align-middle shadow-sm">
             <thead class="table-light">
               <tr>
@@ -278,15 +269,13 @@ export default {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(offer, index) in offers" :key="offer.link">
+              <tr v-for="offer in offers" :key="offer.link">
                 <td>{{ offer.company }}</td>
                 <td>{{ offer.date }}</td>
                 <td>{{ offer.position }}</td>
                 <td>{{ offer.salary }}</td>
                 <td><a :href="offer.link" target="_blank">сайт</a></td>
-                <td>
-                  <span class="badge bg-success mt-1">Отклик подан</span>
-                </td>
+                <td><span class="badge bg-success mt-1">Отклик подан</span></td>
               </tr>
             </tbody>
           </table>
@@ -295,25 +284,29 @@ export default {
 
       <!-- Manual Mode Cards -->
       <div v-if="!isAutoMode && offers.length" class="mt-5">
-        <div class="row row-cols-1 row-cols-md-2 g-3">
-          <div class="col" v-for="(offer, index) in offers" :key="offer.link">
-            <div class="card shadow-sm h-100">
+        <div class="row row-cols-1 row-cols-md-3 g-3">
+          <div
+            class="col"
+            v-for="(offer, index) in offers"
+            :key="offer.link"
+            @click="toggleSelection(index)"
+          >
+            <div
+              class="card offer-card shadow-sm h-100"
+              :class="{ 'selected-card': offer.selected }"
+            >
               <div class="card-body d-flex flex-column justify-content-between">
                 <h5 class="card-title">{{ offer.position }}</h5>
                 <h6 class="card-subtitle mb-2 text-muted">{{ offer.company }}</h6>
                 <p class="card-text mb-2"><strong>Зарплата:</strong> {{ offer.salary }}</p>
                 <p class="card-text mb-2"><strong>Дата:</strong> {{ offer.date }}</p>
-                <div class="form-check mb-3">
-                  <input class="form-check-input" type="checkbox" v-model="offer.selected" :id="'chk' + index" />
-                  <label class="form-check-label" :for="'chk' + index">Выбрать</label>
-                </div>
                 <a :href="offer.link" class="btn btn-outline-primary mt-auto" target="_blank">Подробнее</a>
               </div>
             </div>
           </div>
         </div>
-        <div class="text-end mt-4">
-          <button class="btn btn-primary" @click="submitSelected">Отправить отклики</button>
+        <div class="text-end mt-4 d-flex justify-content-center">
+          <button class="btn btn-outline-secondary" @click="submitSelected">Отправить отклики</button>
         </div>
       </div>
     </div>
@@ -344,42 +337,48 @@ export default {
 </template>
 
 <script setup>
+import { ref } from "vue";
 import { store } from "../../script/store.js";
-</script>
 
-<script>
-export default {
-  name: "Dashboard",
-  data() {
-    return {
-      number: 3,
-      isAutoMode: false,
-      offers: [
-        { company: "amoCRM", date: "15 Dec 2024", position: "Frontend Developer", salary: "до 50 000 ₽", link: "https://hh.ru/vacancy/111898417" },
-        { company: "Yandex", date: "20 Dec 2024", position: "Junior React Dev", salary: "до 60 000 ₽", link: "https://hh.ru/vacancy/123456789" }
-      ],
-      showTooltip: false,
-    };
+const number = ref(3);
+const isAutoMode = ref(false);
+const showTooltip = ref(false);
+
+const offers = ref([
+  {
+    company: "amoCRM",
+    date: "15 Dec 2024",
+    position: "Frontend Developer",
+    salary: "до 50 000 ₽",
+    link: "https://hh.ru/vacancy/111898417",
+    selected: false
   },
-  methods: {
-    incrementNumber() {
-      if (this.number < 20) this.number++;
-    },
-    decrementNumber() {
-      if (this.number > 1) this.number--;
-    },
-    async searchOffers() {
-      this.offers = [
-        { company: "amoCRM", date: "15 Dec 2024", position: "Frontend Developer", salary: "до 50 000 ₽", link: "https://hh.ru/vacancy/111898417" },
-        { company: "Yandex", date: "20 Dec 2024", position: "Junior React Dev", salary: "до 60 000 ₽", link: "https://hh.ru/vacancy/123456789" }
-      ];
-    },
-    submitSelected() {
-      const selected = this.offers.filter(o => o.selected);
-      alert(`Вы откликнулись на ${selected.length} вакансии.`);
-    }
+  {
+    company: "Yandex",
+    date: "20 Dec 2024",
+    position: "Junior React Dev",
+    salary: "до 60 000 ₽",
+    link: "https://hh.ru/vacancy/123456789",
+    selected: false
   }
-};
+]);
+
+function incrementNumber() {
+  if (number.value < 20) number.value++;
+}
+function decrementNumber() {
+  if (number.value > 1) number.value--;
+}
+function searchOffers() {
+  offers.value = offers.value.map(o => ({ ...o, selected: false }));
+}
+function toggleSelection(index) {
+  offers.value[index].selected = !offers.value[index].selected;
+}
+function submitSelected() {
+  const selected = offers.value.filter(o => o.selected);
+  alert(`Вы откликнулись на ${selected.length} вакансии.`);
+}
 </script>
 
 <style scoped>
@@ -399,26 +398,29 @@ export default {
 }
 .tooltip-custom {
   position: absolute;
-  top: 130%;
+  top: 125%;
   left: 50%;
+  transform: translateX(-50%);
   z-index: 10;
-  background: #fff;
-  padding: 10px 14px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: 250px;
-  border: 1px solid #ddd;
-  font-size: 0.875rem;
+  background-color: #575757;
+  color: #ffffff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 1rem;
+  white-space: nowrap;
+  opacity: 0.95;
 }
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.3s ease;
+.offer-card {
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
+.offer-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
-hr.my-4 {
-  border-top: 2px solid #ddd;
-  margin-top: 20px;
-  margin-bottom: 20px;
+.selected-card {
+  border: 2px solid #0d6efd;
+  background-color: #e7f1ff;
+  transform: scale(1.02);
 }
 </style>
