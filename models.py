@@ -20,6 +20,7 @@ class User(Base):
     email = Column(String)
     phone = Column(BigInteger)
     token = Column(BigInteger)
+    password_hash = Column(String)
     hh_resume_id = Column(BigInteger)
     sj_resume_id = Column(BigInteger)
     zp_resume_id = Column(BigInteger)

@@ -1,14 +1,14 @@
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 from models import engine, User, Vacancy, Resume, Tokens, Submission
-from sqlalchemy import func
+from sqlalchemy import func, and_
 
 # Создаем сессию
 Session = sessionmaker(bind=engine)
 session = Session()
 
 ## функция добавления нового пользователя в базу данных
-def create_user(name, sex, age, email, phone, token, hh_resume_id, sj_resume_id, zp_resume_id):
+def create_user(name, sex, age, email, phone, token, password_hash, hh_resume_id, sj_resume_id, zp_resume_id):
     new_user = User(
         name=name,
         sex=sex,
@@ -16,6 +16,7 @@ def create_user(name, sex, age, email, phone, token, hh_resume_id, sj_resume_id,
         email=email,
         phone=phone,
         token=token,
+        password_hash=password_hash,
         hh_resume_id=hh_resume_id,
         sj_resume_id=sj_resume_id,
         zp_resume_id=zp_resume_id,
@@ -39,6 +40,18 @@ def get_all_vacancies():
 def get_user(user_id):
     user = session.query(User).filter(User.user_id == user_id).first()
     return user
+
+## получение хэша пароля по айдишнику пользователя
+def get_hash(user_id):
+    user = session.query(User).filter(User.user_id == user_id).first()
+    return user.password_hash
+
+## получение айдишника пользователя по хэшу и почте
+def get_user_by_mail_and_pass(email, password_hash):
+    user = session.query(User).filter(
+        and_(User.email == email, User.password_hash == password_hash)
+    ).first()
+    return user.user_id
 
 ## функция для получения вакансии по id
 def get_vacancy(vacancy_id):
