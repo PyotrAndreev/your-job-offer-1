@@ -19,6 +19,10 @@ class User(Base):
     age = Column(Integer)
     email = Column(String)
     phone = Column(BigInteger)
+    token = Column(BigInteger)
+    hh_resume_id = Column(BigInteger)
+    sj_resume_id = Column(BigInteger)
+    zp_resume_id = Column(BigInteger)
     created_at = Column(DateTime, default=datetime.utcnow)  # Добавлено поле created_at
 
     resumes = relationship("Resume", back_populates="user")

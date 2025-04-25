@@ -1,19 +1,24 @@
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 from models import engine, User, Vacancy, Resume, Tokens, Submission
+from sqlalchemy import func
 
 # Создаем сессию
 Session = sessionmaker(bind=engine)
 session = Session()
 
 ## функция добавления нового пользователя в базу данных
-def create_user(name, sex, age, email, phone):
+def create_user(name, sex, age, email, phone, token, hh_resume_id, sj_resume_id, zp_resume_id):
     new_user = User(
         name=name,
         sex=sex,
         age=age,
         email=email,
         phone=phone,
+        token=token,
+        hh_resume_id=hh_resume_id,
+        sj_resume_id=sj_resume_id,
+        zp_resume_id=zp_resume_id,
         created_at=datetime.now()
     )
     session.add(new_user)
@@ -102,6 +107,16 @@ def refresh_tokens(tokens_id, new_refresh, new_access):
     tokens = session.query(Tokens).filter(Tokens.tokens_id == tokens_id).first()
     tokens.refresh_token = new_refresh
     tokens.access_token = new_access
+
+## функция получения аксес токена по айдишнику пользователя
+def get_hh_access_token(user_id):
+    tokens = session.query(Tokens).filter(Tokens.user_id == user_id).scalar()
+    return tokens.access_token
+
+## функция получения последнего добавленного пользователя (его айдишника)
+def get_last_user_id():
+  last_id = session.query(func.max(User.user_id)).scalar()
+  return last_id
 
 
 session.close()
