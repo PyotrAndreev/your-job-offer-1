@@ -5,8 +5,11 @@ from sqlalchemy.orm import sessionmaker
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
+from fastapi.middleware.cors import CORSMiddleware
 
-from matcher import vacancies, match_vacancies
+
+
+# from matcher import vacancies, match_vacancies
 from models import Base, User, Company, Vacancy, Resume, Submission
 
 # Создание базы данных
@@ -16,6 +19,14 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Убедитесь, что здесь указан адрес фронтенда
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def get_db():
     db = SessionLocal()
@@ -126,11 +137,13 @@ class SubmissionResponse(SubmissionCreate):
 # CRUD операции для User
 @app.post("/users/", response_model=UserResponse)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
-    db_user = User(**user.dict())
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+
+    # db_user = User(**user.dict())
+    # db.add(db_user)
+    # db.commit()
+    # db.refresh(db_user)
+    # return db_user
+    return User(**user.dict())
 
 @app.get("/users/", response_model=List[UserResponse])
 def read_users(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):

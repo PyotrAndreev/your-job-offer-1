@@ -60,11 +60,18 @@
           <div v-if="errorMessage" class="alert alert-danger mt-3">
             {{ errorMessage }}
           </div>
+          <div v-if="Message" class="alert alert-success mt-3">
+            {{ Message }}
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<script setup>
+import { store } from "../script/store.js";
+</script>
 
 <script>
 import axios from "axios";
@@ -77,6 +84,7 @@ export default {
       password: "",
       confirmPassword: "",
       errorMessage: "",
+      Message: "",
     };
   },
   methods: {
@@ -92,31 +100,33 @@ export default {
           return;
         }
         //server url
+        const path = store.baseUrl + 'users/';
 
-        const path = "http://127.0.0.1:5000/registration";
 
-        await axios
-          .post(path, {
-            username: this.username,
-            email: this.email,
-            password: this.password,
-          })
-          .then(function (response) {
-            console.log("user registered!");
-            console.log(response);
-          })
-          .catch(function (err) {
-            console.log(err);
-          });
-        // Simulate a registration process (replace this with an actual API call)
-        this.errorMessage = "";
-        // Reset fields or redirect here
-        this.username = "";
-        this.email = "";
-        this.password = "";
-        this.confirmPassword = "";
+        // await axios
+        //   .post(path, {
+        //     username: this.username,
+        //     password: this.password,
+        //   })
+        //   .then(function (response) {
+        //     console.log("user registered!");
+        //     console.log(response);
+        //   })
+        //   .catch(function (err) {
+        //     console.log(err);
+        //   });
+        // this.errorMessage = "";
+        // this.username = "";
+        // this.email = "";
+        // this.password = "";
+        // this.confirmPassword = "";
+
+        this.Message = "Регистрация успешна! Перенаправление на страницу входа...";
+        setTimeout(() => {
+          this.$router.replace({ path: "/login" });
+        }, 2000);
       } else {
-        this.errorMessage = "Please fill in all fields";
+        this.errorMessage = "Пожалуйста, заполните все поля";
       }
     },
   },

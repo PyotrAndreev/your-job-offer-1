@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper bg-light">
     <div class="container py-5">
-      <h2 class="mb-4">Edit your resume</h2>
+      <h2 class="mb-4">Профиль</h2>
       <div class="wrapper bg-white mt-4 p-4 rounded-3 border">
         <form
           @submit.prevent="submit"
@@ -29,11 +29,11 @@
               />
             </label>
 
-            <p class="mt-2 fs-5">Upload Photo</p>
+            <p class="mt-2 fs-5">Загрузите фото</p>
           </div>
           <div class="row g-3 w-60 row-gap-2">
             <div class="col-md-12 justfiy-content-center">
-              <label for="upload" class="form-label ">Resume</label>
+              <label for="upload" class="form-label ">Загрузите pdf файл с резюме</label>
               <input
                 class="form-control py-2 border-2"
                 type="file"
@@ -44,111 +44,111 @@
             </div>
             <div class="col-md-6">
               <label for="firstName" class="form-label "
-                >First Name</label
+                >Имя</label
               >
               <input
                 v-model="formData.firstName"
                 type="text"
                 class="form-control py-2 border-2"
                 id="firstName"
-                placeholder="Enter your first name"
+                placeholder="Введите имя"
                 required
               />
             </div>
             <div class="col-md-6">
-              <label for="lastName" class="form-label ">Last Name</label>
+              <label for="lastName" class="form-label ">Фамилия</label>
               <input
                 v-model="formData.lastName"
                 type="text"
                 class="form-control py-2 border-2"
                 id="lastName"
-                placeholder="Enter your last name"
+                placeholder="Введите фамилию"
               />
             </div>
             <div class="col-md-6">
-              <label for="country" class="form-label ">Country</label>
+              <label for="country" class="form-label ">Страна</label>
               <input
                 v-model="formData.country"
                 type="text"
                 class="form-control py-2 border-2"
                 id="country"
-                placeholder="Enter your country"
+                placeholder="Укажите вашу страну"
               />
             </div>
             <div class="col-md-6">
-              <label for="education" class="form-label ">City</label>
+              <label for="education" class="form-label ">Город</label>
               <input
                 v-model="formData.city"
                 type="text"
                 class="form-control py-2 border-2"
                 id="city"
-                placeholder="Enter your city"
+                placeholder="Укажите ваш город"
               />
             </div>
             <div class="col-md-6">
-              <label for="country" class="form-label ">Education</label>
+              <label for="country" class="form-label ">Образование</label>
               <input
                 v-model="formData.education"
                 type="text"
                 class="form-control py-2 border-2"
                 id="education"
-                placeholder="Enter your education"
+                placeholder="Укажите ваше образование"
               />
             </div>
             <div class="col-md-6">
-              <label for="education" class="form-label ">Position</label>
+              <label for="education" class="form-label ">Должность</label>
               <input
                 v-model="formData.position"
                 type="text"
                 class="form-control py-2 border-2"
                 id="postition"
-                placeholder="Enter desired position"
+                placeholder="Укажите желаемую должность"
               />
             </div>
             <div class="col-md-6">
-              <label for="country" class="form-label ">Experience</label>
+              <label for="country" class="form-label ">Опыт</label>
               <input
                 v-model="formData.experience"
                 type="text"
                 class="form-control py-2 border-2"
                 id="experience"
-                placeholder="Describe your experience"
+                placeholder="Опишите ваш опыт"
               />
             </div>
             <div class="col-md-6">
-              <label for="education" class="form-label ">Skills</label>
+              <label for="education" class="form-label ">Навыки</label>
               <input
                 v-model="formData.skills"
                 type="text"
                 class="form-control py-2 border-2"
                 id="skills"
-                placeholder="Describe your skills"
+                placeholder="Опишите ваши навыки"
               />
             </div>
             <div class="col-md-6">
-              <label for="age" class="form-label ">Age</label>
+              <label for="age" class="form-label ">Возраст</label>
               <input
                 v-model="formData.age"
                 type="number"
                 class="form-control py-2 border-2"
                 id="age"
-                placeholder="Enter your age"
+                placeholder="Укажите возраст"
               />
             </div>
             <div class="col-md-6">
-              <label for="gender" class="form-label ">Gender</label>
+              <label for="gender" class="form-label ">Пол</label>
               <select
                 v-model="formData.gender"
                 id="gender"
                 class="form-select py-2 border-2"
               >
-                <option value="male">Male</option>
-                <option value="female">Female</option>
+                <option value="male">Мужской</option>
+                <option value="female">Женский</option>
               </select>
             </div>
             <div class="col-12 text-center pt-4">
               <button type="submit" class="btn btn-primary fs-5">
-                Save changes
+                Сохранить изменения
               </button>
             </div>
           </div>
@@ -164,7 +164,6 @@ import { store } from "../../script/store.js";
 
 <script>
 import axios from "axios";
-import { store } from "../../script/store.js";
 
 export default {
   name: "EditResume",

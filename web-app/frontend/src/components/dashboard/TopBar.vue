@@ -13,7 +13,7 @@
       <!-- Styled Dropdown -->
       <div class="dropdown nav-item me-3">
         <button
-          class="btn dropdown-toggle border rounded-pill border"
+          class="btn dropdown-toggle rounded-pill border"
           type="button"
           id="dropdownMenuButton1"
           data-bs-toggle="dropdown"
@@ -27,12 +27,12 @@
         >
           <li>
             <a class="dropdown-item" href="/">
-              <i class="fas fa-arrow-left me-2"></i>Return to main
+              <i class="fas fa-arrow-left me-2"></i>Возврат на главную
             </a>
           </li>
           <li>
             <a class="dropdown-item" href="/#features">
-              <i class="fas fa-star me-2"></i>See our features
+              <i class="fas fa-star me-2"></i>Наши фишки
             </a>
           </li>
         </ul>
@@ -49,7 +49,7 @@ import { store } from "../../script/store.js";
 export default {
   data() {
     return {
-      userName: "Your name",
+      userName: "Ваш аккаунт",
     };
   },
   mounted() {

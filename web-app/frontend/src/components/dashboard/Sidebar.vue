@@ -28,7 +28,7 @@
             :class="{
               'color': activeTab === 'dashboard',
             }"/>
-            <span v-if="!isCollapsed" class="px-2">Dashboard</span>
+            <span v-if="!isCollapsed" class="px-2">Дэшборд</span>
           </button>
         </li>
         <li class="nav-item py-1">
@@ -44,7 +44,7 @@
             :class="{
               'color': activeTab === 'resume',
             }"/>
-            <span v-if="!isCollapsed" class="px-2">About me</span>
+            <span v-if="!isCollapsed" class="px-2">Профиль</span>
           </button>
         </li>
         <li class="nav-item py-1">
@@ -60,7 +60,7 @@
             :class="{
               'color': activeTab === 'applications',
             }"/>
-            <span v-if="!isCollapsed" class="px-2">Applications</span>
+            <span v-if="!isCollapsed" class="px-2">История</span>
           </button>
         </li>
       </ul>

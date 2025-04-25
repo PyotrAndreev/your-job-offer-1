@@ -1,6 +1,6 @@
 <template>
   <div class="p-4 bg-light">
-    <h2 class="mb-4">Applications</h2>
+    <h2 class="mb-4">История (в разработке...)</h2>
     <div class="wrapper bg-white vh-100 p-4 rounded-3 border">
       <div class="d-flex justify-content-between mb-3">
         <div class="d-flex dropdown menu">
