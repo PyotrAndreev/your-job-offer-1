@@ -8,7 +8,7 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 ## функция добавления нового пользователя в базу данных
-def create_user(name, sex, age, email, phone, token, password_hash, hh_resume_id, sj_resume_id, zp_resume_id):
+def create_user(name, sex, age, email, phone, token, password_hash):
     new_user = User(
         name=name,
         sex=sex,
@@ -17,9 +17,6 @@ def create_user(name, sex, age, email, phone, token, password_hash, hh_resume_id
         phone=phone,
         token=token,
         password_hash=password_hash,
-        hh_resume_id=hh_resume_id,
-        sj_resume_id=sj_resume_id,
-        zp_resume_id=zp_resume_id,
         created_at=datetime.now()
     )
     session.add(new_user)
