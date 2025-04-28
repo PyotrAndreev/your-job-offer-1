@@ -41,6 +41,37 @@ def get_user(user_id):
     user = session.query(User).filter(User.user_id == user_id).first()
     return user
 
+## по email проверяет наличие пользователя
+def exist_user(email):
+    user = session.query(User).filter(User.email == email).first()
+    return user is not None
+
+
+## всякие функции для обновления информации о пользователе
+def update_user_name(user_id, new_name):
+    user = session.query(User).filter(User.user_id == user_id).first()
+    user.name = new_name
+
+def update_user_sex(user_id, new_sex):
+    user = session.query(User).filter(User.user_id == user_id).first()
+    user.sex = new_sex
+
+def update_user_age(user_id, new_age):
+    user = session.query(User).filter(User.user_id == user_id).first()
+    user.age = new_age
+
+def update_user_phone(user_id, new_phone):
+    user = session.query(User).filter(User.user_id == user_id).first()
+    user.phone = new_phone
+
+def update_user_email(user_id, new_email):
+    user = session.query(User).filter(User.user_id == user_id).first()
+    user.email = new_email
+
+def update_user_pass(user_id, new_pass):
+    user = session.query(User).filter(User.user_id == user_id).first()
+    user.password_hash = new_pass
+
 ## получение хэша пароля по айдишнику пользователя
 def get_hash(user_id):
     user = session.query(User).filter(User.user_id == user_id).first()
@@ -51,6 +82,8 @@ def get_user_by_mail_and_pass(email, password_hash):
     user = session.query(User).filter(
         and_(User.email == email, User.password_hash == password_hash)
     ).first()
+    if user == None:
+        return None
     return user.user_id
 
 ## функция для получения вакансии по id
