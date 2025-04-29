@@ -8,7 +8,7 @@ import logging
 
 from sqlalchemy.orm import sessionmaker
 from models import Vacancy as DB_Vacancy, engine
-from updating_bd import update_time, get_last_update
+from backend.database.updating_bd import update_time, get_last_update
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
