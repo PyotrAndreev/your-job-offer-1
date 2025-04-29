@@ -1,7 +1,6 @@
 from rapidfuzz import fuzz
 import requests
 from concurrent.futures import ThreadPoolExecutor
-import heapq
 
 from db_functions import get_all_vacancies, get_resume, create_resume
 
@@ -54,6 +53,7 @@ def process_vacancy(vacancy, resume):
         similarity += match_skills_and_requirements(requirements, skills)
     job_title = vacancy.job_title.lower()
     similarity += match_skills_and_requirements(job_title, skills)
+    similarity += match_skills_and_requirements(job_title, resume.job_title)
     return similarity, vacancy.vacancy_id, vacancy.job_title
 
 

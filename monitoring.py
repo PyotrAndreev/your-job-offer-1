@@ -1,4 +1,7 @@
 import requests
+from requests.exceptions import HTTPError, Timeout, ConnectionError
+import logging
+import time
 
 client_id = "GES2OLI3SIBO9IEP71CQNM9P35M6FRG29SGD1JFICCRI2P2PQD6F5SBFQHLDO3LD"
 client_secret = "NV4JTC1JU0IJNQLBEQLSDDSOQ2RSMDFGNA3NI8UNAJT2R7IGUVIPVNELQU5DR8FG"
@@ -13,31 +16,85 @@ def get_response_status(response_id, access_token):
     else:
         return response.text
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+file_handler = logging.FileHandler('messages', mode='w', encoding='utf-8')
+logger.addHandler(file_handler)
 
 def get_response_messages(response_id, access_token):
     url = f'https://api.hh.ru/negotiations/{response_id}/messages'
     headers = {'Authorization': f'Bearer {access_token}'}
-    response = requests.get(url, headers=headers)
-    messages = []
-    if response.status_code == 200:
-        for message in response.json()['items']:
-            messages.append((message['text'], message['author']))
-        return messages
-    else:
-        return response.text
+    page = 0
+    retries = 5
+    while True:
+        params = {
+            'page': page,
+            'per_page': 20
+        }
+        try:
+            response = requests.get(url, headers=headers)
+        except (Timeout, ConnectionError, ConnectionResetError):
+            if retries > 0:
+                retries -= 1
+                logger.warning("Ошибка соединения, повторная попытка через 20 секунд")
+                time.sleep(20)
+            else:
+                logger.error("Повторное соединение не удалось, переходим к следующему запросу")
+                break
+        except HTTPError as exc:
+            if exc.response.status_code == 429:
+                logger.warning("Превышено допустимое число запросов, задержка 20 секунд")
+                time.sleep(20)
+                continue
+            logger.error(f"Ошибка {exc.response.status_code}")
+            break
+        else:
+            messages = []
+            if response.status_code == 200:
+                for message in response.json()['items']:
+                    messages.append((message['text'], message['author']))
+                return messages
+            else:
+                return response.text
 
 def get_responses(access_token):
     headers = {
         'Authorization': f'Bearer {access_token}'
     }
-    response = requests.get('https://api.hh.ru/negotiations', headers=headers)
 
-    if response.status_code == 200:
-        responses = response.json()
-        for res in responses['items']:
-            print(res)
-    else:
-        print(f"Ошибка: {response.status_code} {response.text}")
+    page = 0
+    retries = 5
+    while True:
+        params = {
+            'page': page,
+            'per_page': 20
+        }
+        try:
+            response = requests.get('https://api.hh.ru/negotiations', headers=headers, params=params)
+        except (Timeout, ConnectionError, ConnectionResetError):
+            if retries > 0:
+                retries -= 1
+                logger.warning("Ошибка соединения, повторная попытка через 20 секунд")
+                time.sleep(20)
+            else:
+                logger.error("Повторное соединение не удалось, переходим к следующему запросу")
+                break
+        except HTTPError as exc:
+            if exc.response.status_code == 429:
+                logger.warning("Превышено допустимое число запросов, задержка 20 секунд")
+                time.sleep(20)
+                continue
+            logger.error(f"Ошибка {exc.response.status_code}")
+            break
+        else:
+
+            if response.status_code == 200:
+                responses = response.json()
+                for res in responses['items']:
+                    print(res)
+            else:
+                print(f"Ошибка: {response.status_code} {response.text}")
 
 # took from Andrey's branch
 
