@@ -138,12 +138,11 @@ class SubmissionResponse(SubmissionCreate):
 @app.post("/users/", response_model=UserResponse)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
-    # db_user = User(**user.dict())
-    # db.add(db_user)
-    # db.commit()
-    # db.refresh(db_user)
-    # return db_user
-    return User(**user.dict())
+    db_user = User(**user.dict())
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
 
 @app.get("/users/", response_model=List[UserResponse])
 def read_users(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):

@@ -48,10 +48,11 @@ router.beforeEach((to, from) => {
       // User is not authenticated; redirect to login
       return {name: 'Login'}
     }
-  } else {
+  } 
+  // else {
     // Allow access to non-protected routes
     // next();
-  }
+  // }
 });
 
 export default router

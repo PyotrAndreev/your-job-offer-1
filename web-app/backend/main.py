@@ -30,10 +30,12 @@ def get_config():
 
 app = FastAPI()
 
+baseURL = os.getenv("BASE_URL") or "http://localhost:3000/"
+
 # CORS Configuration (restrict origins for production)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000/"],  # Replace with your frontend URL put it in .env
+    allow_origins=[baseURL],  # Replace with your frontend URL put it in .env
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -122,11 +124,11 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), Authorize: Aut
     access_token = Authorize.create_access_token(subject=form_data.username)
     return {"access_token": access_token}
 
-@app.get("/dashboard")
-async def dashboard(Authorize: AuthJWT = Depends()):
-    Authorize.jwt_required()
-    current_user = Authorize.get_jwt_subject()
-    return {"logged_in_as": current_user}
+# @app.get("/dashboard")
+# async def dashboard(Authorize: AuthJWT = Depends()):
+#     Authorize.jwt_required()
+#     current_user = Authorize.get_jwt_subject()
+#     return {"logged_in_as": current_user}
 
 @app.get("/")
 async def entry():
