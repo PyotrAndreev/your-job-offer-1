@@ -100,26 +100,29 @@ export default {
           return;
         }
         //server url
-        const path = store.baseUrl + 'users/';
+        // const path = store.baseUrl + 'users/';
 
 
-        // await axios
-        //   .post(path, {
-        //     username: this.username,
-        //     password: this.password,
-        //   })
-        //   .then(function (response) {
-        //     console.log("user registered!");
-        //     console.log(response);
-        //   })
-        //   .catch(function (err) {
-        //     console.log(err);
-        //   });
-        // this.errorMessage = "";
-        // this.username = "";
-        // this.email = "";
-        // this.password = "";
-        // this.confirmPassword = "";
+        const path = "http://127.0.0.1:8000/registration"
+
+
+        await axios
+          .post(path, {
+            username: this.username,
+            password: this.password
+          })
+          .then(function (response) {
+            console.log("user registered!");
+            console.log(response);
+          })
+          .catch(function (err) {
+            console.log(err);
+          });
+        this.errorMessage = "";
+        this.username = "";
+        this.email = "";
+        this.password = "";
+        this.confirmPassword = "";
 
         this.Message = "Регистрация успешна! Перенаправление на страницу входа...";
         setTimeout(() => {

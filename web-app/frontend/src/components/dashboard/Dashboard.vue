@@ -261,10 +261,10 @@ export default {
         >
           <div class="alert-content">
             <!-- <font-awesome-icon :icon="['fas', 'circle-info']" class="alert-icon"/> -->
-            <div>
+            <!-- <div> -->
               <h6 class="alert-title">Требуется действие</h6>
               <p class="alert-message">Пожалуйста, заполните данные во вкладке "Резюме"</p>
-            </div>
+            <!-- </div> -->
           </div>
         </div>
 
@@ -273,11 +273,13 @@ export default {
           class="modern-alert alert-warning"
         >
           <div class="alert-content">
+            <!-- <font-awesome-icon :icon="['fas', 'circle-info']" class="alert-icon"/> -->
+
             <!-- <font-awesome-icon :icon="['fas', 'shield-exclamation']" class="alert-icon"/> -->
-            <div>
+            <!-- <div> -->
               <h6 class="alert-title">Требуется авторизация</h6>
               <p class="alert-message">Нам нужно разрешение подаваться на вакансии hh.ru от вашего лица</p>
-            </div>
+            <!-- </div> -->
           </div>
         </div>
       </div>
@@ -603,6 +605,7 @@ function submitSelected() {
   border-radius: 12px;
   display: flex;
   align-items: center;
+  justify-content: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   border: none;
   transition: all 0.3s ease;
@@ -612,16 +615,22 @@ function submitSelected() {
 .alert-info {
   background-color: #f0f7ff;
   color: #0066cc;
+  /* background-color: #fff8e6;
+  color: #e67e00; */
 }
 
 .alert-warning {
   background-color: #fff8e6;
   color: #e67e00;
+  /* background-color: #f0f7ff;
+  color: #0066cc; */
 }
 
 .alert-content {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 12px;
 }
 
@@ -633,7 +642,7 @@ function submitSelected() {
 
 .alert-title {
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 1px;
   font-size: 0.95rem;
 }
 

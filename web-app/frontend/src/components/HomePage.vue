@@ -2,7 +2,7 @@
   <!-- Navigation Bar -->
   <nav class="navbar navbar-expand-lg navbar-light border-bottom border-2 bg-white">
     <div class="container">
-      <a class="navbar-brand fs-4 fw-normal" href="home">
+      <a class="navbar-brand fs-4 fw-normal" href="./">
         <img src="../assets/logotype.svg" alt="Логотип" class="logo-hover">
       </a>
       <button

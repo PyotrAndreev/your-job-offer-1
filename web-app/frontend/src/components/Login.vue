@@ -44,11 +44,6 @@
   </div>
 </template>
 
-
-<script setup>
-import { store } from "../script/store.js";
-</script>
-
 <script>
 import axios from "axios";
 
@@ -62,10 +57,11 @@ export default {
   },
   methods: {
     async login() {
+      // console.log(123)
       this.$router.replace({ path: "/dashboard" });
 
       // if (this.username && this.password) {
-      //   const path = store.baseUrl + "login";
+      //   const path = "http://127.0.0.1:5000/login";
       //   let msg = "";
       //   await axios
       //     .post(path, {
