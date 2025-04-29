@@ -27,13 +27,14 @@ def get_response_messages(response_id, access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
     page = 0
     retries = 5
+    messages = []
     while True:
         params = {
             'page': page,
             'per_page': 20
         }
         try:
-            response = requests.get(url, headers=headers)
+            response = requests.get(url, headers=headers, params=params)
         except (Timeout, ConnectionError, ConnectionResetError):
             if retries > 0:
                 retries -= 1
@@ -50,13 +51,13 @@ def get_response_messages(response_id, access_token):
             logger.error(f"Ошибка {exc.response.status_code}")
             break
         else:
-            messages = []
             if response.status_code == 200:
                 for message in response.json()['items']:
                     messages.append((message['text'], message['author']))
-                return messages
             else:
                 return response.text
+            page += 1
+        return messages
 
 def get_responses(access_token):
     headers = {
@@ -95,6 +96,7 @@ def get_responses(access_token):
                     print(res)
             else:
                 print(f"Ошибка: {response.status_code} {response.text}")
+            page += 1
 
 # took from Andrey's branch
 
