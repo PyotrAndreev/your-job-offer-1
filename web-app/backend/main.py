@@ -66,12 +66,15 @@ def save_file(file: UploadFile, user_id: str):
         buffer.write(file.file.read())
     return str(file_path)
 
+from database.db_functions import create_resume, update_user_name, update_user_age, update_user_sex
+
+
 @app.post("/userData")
 async def user_data(
-    user_id: str = Form(None),
+    user_id: str = Form(...),
     first_name: str = Form(...),
     last_name: str = Form(...),
-    resume: UploadFile = File(...),
+    # resume: UploadFile = File(...),
     country: str = Form(...),
     city: str = Form(...),
     education: str = Form(...),
@@ -81,34 +84,30 @@ async def user_data(
     age: int = Form(...),
     gender: str = Form(...)
 ):
-    if resume:
-        True
+    # if resume:
+        # True
+        # resume_path = save_file(resume, user_id)
         # Add resume parsing function
 
-    if not user_id:
-        user_id = str(uuid4())  # New User
-        message = "New user created successfully"
-    else:
-        if user_id not in fake_users_db:
-            raise HTTPException(status_code=404, detail="User ID not found")
-        message = "User data updated successfully"
+    update_user_name(user_id, first_name + last_name)
+    update_user_age(user_id, age)
+    update_user_sex(user_id, gender)
 
-    resume_path = save_file(resume, user_id)
+    title = "Специалист"
+    district = ""
+    min_salary = "200000"
+    max_salary = "2000000"
+    work_schedule_working_days = "пн вт ср чт пт"
+    work_schedule_time_intervals = "8:00 17:00"
+    remote_work = True
 
-    # fake_users_db[user_id] = {
-    #     "first_name": first_name,
-    #     "last_name": last_name,
-    #     "resume": resume_path,
-    #     "country": country,
-    #     "city": city,
-    #     "education": education,
-    #     "position": position,
-    #     "experience": experience,
-    #     "skills": skills,
-    #     "age": age,
-    #     "gender": gender,
-    # }
-    return {"message": message, "user_id": user_id}
+    create_resume(user_id, title, position, country, city, district, min_salary, max_salary,
+                work_schedule_working_days, work_schedule_time_intervals,
+                experience, remote_work, education, skills)
+
+    message = "Данные успешно сохранены"
+
+    return {"message": message}
 
 
 from database.db_functions import get_user_by_mail, delete_user

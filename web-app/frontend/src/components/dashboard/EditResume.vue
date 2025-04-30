@@ -209,18 +209,18 @@ export default {
       localStorage.setItem("formData", JSON.stringify(this.formData));
     },
 
-    // Submit form data to the backend
+    // // Submit form data to the backend
     async submit() {
       store.userFilledData = true; // Set store flag to indicate data submission
       try {
         const formData = new FormData();
         const resumeFile = document.getElementById("upload").files[0];
 
-        if (resumeFile) {
-          console.log(2)
+        // if (resumeFile) {
+          // console.log(2)
           // alert("Please upload a resume.");
           // return;
-        }
+        // }
 
         // Append data to FormData
         if (this.userId) {
@@ -238,25 +238,23 @@ export default {
         formData.append("age", parseInt(this.formData.age, 10));
         formData.append("gender", this.formData.gender);
 
+        
+        const path = "http://127.0.0.1:8000/userData"
+
         // Send data to the server
         const response = await axios.post(
-          `${store.baseUrl}userData`,
+          path,
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },
           }
         );
 
-        console.log("Response from server:", response.data);
+        console.log("Ответ сервера:", response.data);
 
-        const { message, user_id } = response.data;
+        const message = response.data.message;
 
-        // Save user_id in localStorage if creating a new user
-        if (!this.userId) {
-          localStorage.setItem("user_id", user_id);
-        }
-
-        alert(`${message}! Welcome!`);
+        alert(`${message}! Спасибо!`);
       } catch (error) {
         if (error.response) {
           console.error("Server responded with:", error.response.data);
@@ -264,7 +262,7 @@ export default {
         } else {
           console.error("Request error:", error);
           alert(
-            "An error occurred while submitting the form. Please try again."
+            "Что-то пошло не так, пожалуйста, попробуйте снова"
           );
         }
       }

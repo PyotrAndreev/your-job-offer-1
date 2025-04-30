@@ -55,7 +55,7 @@ export default {
   mounted() {
     const savedData = localStorage.getItem("formData");
     if (savedData) {
-      store.userFilledData = true;
+      // store.userFilledData = true;
       this.userName = JSON.parse(savedData).firstName;
     }
   },
