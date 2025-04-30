@@ -6,12 +6,12 @@
           <h2 class="text-center pb-4">Регистрация</h2>
           <form @submit.prevent="register">
             <div class="mb-3">
-              <label for="username" class="form-label">Имя пользователя</label>
+              <label for="phoneNumber" class="form-label">Номер телефона</label>
               <input
-                type="text"
+                type="tel"
                 class="form-control"
-                id="username"
-                v-model="username"
+                id="phoneNumber"
+                v-model="phoneNumber"
                 required
               />
             </div>
@@ -69,17 +69,13 @@
   </div>
 </template>
 
-<script setup>
-import { store } from "../script/store.js";
-</script>
-
 <script>
 import axios from "axios";
 
 export default {
   data() {
     return {
-      username: "",
+      phoneNumber: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -90,17 +86,23 @@ export default {
   methods: {
     async register() {
       if (
-        this.username &&
+        this.phoneNumber &&
         this.email &&
         this.password &&
         this.confirmPassword
       ) {
+
+        if (!/^(\+7)\d{10}$/.test(this.phoneNumber)) {
+          this.errorMessage = "Введите номер в формате - +7XXXXXXXXXX";
+          return;
+        }
+
         if (this.password !== this.confirmPassword) {
-          this.errorMessage = "Passwords do not match";
+          this.errorMessage = "Пароли не совпадают";
           return;
         }
         //server url
-        // const path = store.baseUrl + 'users/';
+        // const path = store.baseUrl + 'registration/';
 
 
         const path = "http://127.0.0.1:8000/registration"
@@ -108,18 +110,19 @@ export default {
 
         await axios
           .post(path, {
-            username: this.username,
+            phoneNumber: this.phoneNumber,
+            email: this.email,
             password: this.password
           })
-          .then(function (response) {
+          .then((response) => {
+            localStorage.setItem("user_id", response.data.user_id); 
             console.log("user registered!");
-            console.log(response);
           })
-          .catch(function (err) {
+          .catch((err) => {
             console.log(err);
           });
         this.errorMessage = "";
-        this.username = "";
+        this.phoneNumber = "";
         this.email = "";
         this.password = "";
         this.confirmPassword = "";
@@ -127,7 +130,7 @@ export default {
         this.Message = "Регистрация успешна! Перенаправление на страницу входа...";
         setTimeout(() => {
           this.$router.replace({ path: "/login" });
-        }, 2000);
+        }, 1000);
       } else {
         this.errorMessage = "Пожалуйста, заполните все поля";
       }

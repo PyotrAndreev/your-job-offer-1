@@ -1,6 +1,6 @@
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
-from models import engine, User, Vacancy, Resume, Tokens, Submission
+from database.models import engine, User, Vacancy, Resume, Tokens, Submission
 from sqlalchemy import func, and_
 
 # Создаем сессию
@@ -67,19 +67,29 @@ def update_user_pass(user_id, new_pass):
     user = session.query(User).filter(User.user_id == user_id).first()
     user.password_hash = new_pass
 
+def delete_user(user_id):
+    user = session.query(User).filter(User.user_id == user_id).first()
+    if user:
+        session.delete(user)
+        session.commit()
+        print(f"Пользователь с ID {user_id} удалён.")
+        return True
+    else:
+        print(f"Пользователь с ID {user_id} не найден.")
+        return False
+
 ## получение хэша пароля по айдишнику пользователя
 def get_hash(user_id):
     user = session.query(User).filter(User.user_id == user_id).first()
     return user.password_hash
 
 ## получение айдишника пользователя по хэшу и почте
-def get_user_by_mail_and_pass(email, password_hash):
+def get_user_by_mail(email):
     user = session.query(User).filter(
-        and_(User.email == email, User.password_hash == password_hash)
-    ).first()
+        and_(User.email == email)).first()
     if user == None:
         return None
-    return user.user_id
+    return {hash: user.password_hash, id: user.user_id}
 
 ## функция для получения вакансии по id
 def get_vacancy(vacancy_id):

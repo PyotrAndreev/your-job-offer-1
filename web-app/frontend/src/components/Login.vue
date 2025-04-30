@@ -6,12 +6,12 @@
           <h2 class="text-center pb-4">Вход</h2>
           <form @submit.prevent="login">
             <div class="mb-3">
-              <label for="username" class="form-label">Имя пользователя</label>
+              <label for="email" class="form-label">Почта</label>
               <input
-                type="text"
+                type="email"
                 class="form-control"
-                id="username"
-                v-model="username"
+                id="email"
+                v-model="email"
                 required
               />
             </div>
@@ -44,47 +44,58 @@
   </div>
 </template>
 
+<script setup>
+import { store } from "../script/store.js";
+</script>
+
 <script>
 import axios from "axios";
 
 export default {
   data() {
     return {
-      username: "",
+      email: "",
       password: "",
       errorMessage: "",
     };
   },
   methods: {
     async login() {
-      // console.log(123)
-      this.$router.replace({ path: "/dashboard" });
+      // this.$router.replace({ path: "/dashboard" });
 
-      // if (this.username && this.password) {
-      //   const path = "http://127.0.0.1:5000/login";
-      //   let msg = "";
-      //   await axios
-      //     .post(path, {
-      //       username: this.username,
-      //       password: this.password,
-      //     })
-      //     .then(function (response) {
-      //       if (response.data.access_token) {
-      //         localStorage.setItem("token", response.data.access_token);
-      //       }
-      //     })
-      //     .catch(function (err) {
-      //       console.log(err);
-      //       msg = err.response.data.msg;
-      //     });
-      //   if (msg === "") {
-      //     this.$router.replace({ path: "/dashboard" });
-      //   }
-      //   this.errorMessage = msg;
-      //   console.log(this.errorMessage);
-      // } else {
-      //   this.errorMessage = "Please fill in all fields";
-      // }
+      const path = "http://127.0.0.1:8000/login"
+
+      if (this.email && this.password) {
+        let msg = "";
+        await axios
+          .post(path, {
+            email: this.email,
+            password: this.password,
+          })
+          .then((response) => {
+            if (response.data.access_token) {
+              localStorage.setItem("user_id", response.data.user_id);
+              localStorage.setItem("token", response.data.access_token);
+              console.log("User logged in!");
+            } else {
+              this.errorMessage = "Что-то пошло не так, попробуйте пройти регистрацию заново"
+              msg = "error"
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            msg = err.response.data.msg;
+          });
+        if (msg === "") {
+          this.$router.replace({ path: "/dashboard" });
+        }
+        this.errorMessage = msg;
+        console.log(this.errorMessage);
+      } else {
+        this.errorMessage = "Пожалуйста, заполните все поля";
+      }
+      this.email = ""
+      this.password = ""
     },
   },
 };

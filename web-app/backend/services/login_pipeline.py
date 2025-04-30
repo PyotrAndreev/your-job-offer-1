@@ -1,4 +1,4 @@
-from db_functions import get_user_by_mail_and_pass
+from backend.database.db_functions import get_user_by_mail_and_pass
 
 # передается с фронта
 email = "vasya@mail.ru"

@@ -30,12 +30,12 @@ def get_config():
 
 app = FastAPI()
 
-baseURL = os.getenv("BASE_URL") or "http://localhost:3000/"
+baseURL = os.getenv("BASE_URL")
 
 # CORS Configuration (restrict origins for production)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[baseURL],  # Replace with your frontend URL put it in .env
+    allow_origins=["*"],  # Replace with your frontend URL put it in .env
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -45,10 +45,6 @@ app.add_middleware(
 UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
-# Simulated user database
-fake_users_db = {
-    "test": {"username": "test", "hashed_password": hash_password("test")}
-}
 
 ALLOWED_EXTENSIONS = {'pdf'}
 
@@ -99,30 +95,48 @@ async def user_data(
 
     resume_path = save_file(resume, user_id)
 
-    fake_users_db[user_id] = {
-        "first_name": first_name,
-        "last_name": last_name,
-        "resume": resume_path,
-        "country": country,
-        "city": city,
-        "education": education,
-        "position": position,
-        "experience": experience,
-        "skills": skills,
-        "age": age,
-        "gender": gender,
-    }
+    # fake_users_db[user_id] = {
+    #     "first_name": first_name,
+    #     "last_name": last_name,
+    #     "resume": resume_path,
+    #     "country": country,
+    #     "city": city,
+    #     "education": education,
+    #     "position": position,
+    #     "experience": experience,
+    #     "skills": skills,
+    #     "age": age,
+    #     "gender": gender,
+    # }
     return {"message": message, "user_id": user_id}
 
+
+from database.db_functions import get_user_by_mail, delete_user
+
+class LoginData(BaseModel):
+    email: str
+    password: str
+
 @app.post("/login")
-async def login(form_data: OAuth2PasswordRequestForm = Depends(), Authorize: AuthJWT = Depends()):
-    user = fake_users_db.get(form_data.username)
+async def login(data: LoginData, Authorize: AuthJWT = Depends()):
 
-    if not user or not verify_password(form_data.password, user["hashed_password"]):
-        raise HTTPException(status_code=401, detail="Invalid username or password")
+    email = data.email
+    password = data.password
 
-    access_token = Authorize.create_access_token(subject=form_data.username)
-    return {"access_token": access_token}
+    user_data = get_user_by_mail(email)
+
+    if (user_data == None):
+        raise HTTPException(status_code=401, detail="Не верный Eamil или пароль")
+    
+    password_hash, user_id = user_data.values()
+
+    if not verify_password(password, password_hash):
+        raise HTTPException(status_code=401, detail="Не верный Eamil или пароль")
+    
+    access_token = Authorize.create_access_token(subject=data.email)
+    return {"access_token": access_token, "user_id": user_id}
+
+
 
 # @app.get("/dashboard")
 # async def dashboard(Authorize: AuthJWT = Depends()):
@@ -134,11 +148,31 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), Authorize: Aut
 async def entry():
     return "Server is running"
 
-@app.post("/registration")
-async def registration(username: str, password: str):
-    if username in fake_users_db:
-        raise HTTPException(status_code=400, detail="Username already taken")
 
-    hashed_password = hash_password(password)
-    fake_users_db[username] = {"username": username, "hashed_password": hashed_password}
-    return {"message": "User registered successfully"}
+from database.db_functions import create_user, get_last_user_id, add_tokens
+from services.hhru_api import exchange_code_for_tokens
+
+
+class RegistrationData(BaseModel):
+    phoneNumber: str
+    email: str
+    password: str
+
+@app.post("/registration")
+async def registration(data: RegistrationData):
+    name = ""
+    sex = ""
+    age = 0
+    email = data.email
+    phone = data.phoneNumber
+    password_hash = hash_password(data.password)
+
+    try:
+        create_user(name, sex, age, email, phone, password_hash)
+        user_id = get_last_user_id()
+        return {"user_id": user_id}
+    except Exception as e:
+          raise HTTPException(
+            status_code=400,
+            detail=f"Не удалось создать пользователя: {str(e)}"
+        )

@@ -1,5 +1,5 @@
 from new_matcher import search_vacancies_for_user
-from db_functions import get_hh_access_token
+from backend.database.db_functions import get_hh_access_token
 from hhru_api import get_users_last_resume_id, apply_for_vacancy
 
 user_id = 1 # Настоящее значение передается от фронта

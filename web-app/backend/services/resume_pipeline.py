@@ -1,4 +1,4 @@
-from db_functions import create_resume
+from backend.database.db_functions import create_resume
 
 # Передается с фронта
 user_id = 1

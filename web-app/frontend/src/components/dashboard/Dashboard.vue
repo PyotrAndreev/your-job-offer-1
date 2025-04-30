@@ -263,7 +263,7 @@ export default {
             <!-- <font-awesome-icon :icon="['fas', 'circle-info']" class="alert-icon"/> -->
             <!-- <div> -->
               <h6 class="alert-title">Требуется действие</h6>
-              <p class="alert-message">Пожалуйста, заполните данные во вкладке "Резюме"</p>
+              <p class="alert-message">Пожалуйста, заполните анкету во вкладке "Профиль"</p>
             <!-- </div> -->
           </div>
         </div>
@@ -273,9 +273,7 @@ export default {
           class="modern-alert alert-warning"
         >
           <div class="alert-content">
-            <!-- <font-awesome-icon :icon="['fas', 'circle-info']" class="alert-icon"/> -->
-
-            <!-- <font-awesome-icon :icon="['fas', 'shield-exclamation']" class="alert-icon"/> -->
+             <!-- <font-awesome-icon :icon="['fas', 'circle-info']" class="alert-icon"/> -->
             <!-- <div> -->
               <h6 class="alert-title">Требуется авторизация</h6>
               <p class="alert-message">Нам нужно разрешение подаваться на вакансии hh.ru от вашего лица</p>
@@ -642,13 +640,12 @@ function submitSelected() {
 
 .alert-title {
   font-weight: 600;
-  margin-bottom: 1px;
   font-size: 0.95rem;
 }
 
 .alert-message {
   margin: 0;
-  font-size: 0.85rem;
+  font-size: 0.90rem;
   line-height: 1.4;
 }
 
