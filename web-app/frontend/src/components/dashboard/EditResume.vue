@@ -238,8 +238,9 @@ export default {
         formData.append("age", parseInt(this.formData.age, 10));
         formData.append("gender", this.formData.gender);
 
-        
-        const path = "http://127.0.0.1:8000/userData"
+      
+
+        const path = process.env.BASEURL + "userData"
 
         // Send data to the server
         const response = await axios.post(

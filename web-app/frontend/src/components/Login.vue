@@ -44,10 +44,6 @@
   </div>
 </template>
 
-<script setup>
-import { store } from "../script/store.js";
-</script>
-
 <script>
 import axios from "axios";
 
@@ -61,9 +57,7 @@ export default {
   },
   methods: {
     async login() {
-      // this.$router.replace({ path: "/dashboard" });
-
-      const path = "http://127.0.0.1:8000/login"
+      const path = process.env.BASEURL + "login"
 
       if (this.email && this.password) {
         let msg = "";

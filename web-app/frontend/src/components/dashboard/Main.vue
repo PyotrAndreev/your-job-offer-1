@@ -20,10 +20,6 @@
   </div>
 </template>
 
-<script setup>
-import { store } from "../../script/store.js";
-</script>
-
 <script>
 import Sidebar from "./Sidebar.vue";
 import EditResume from "./EditResume.vue";

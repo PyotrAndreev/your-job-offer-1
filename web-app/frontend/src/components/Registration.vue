@@ -101,12 +101,8 @@ export default {
           this.errorMessage = "Пароли не совпадают";
           return;
         }
-        //server url
-        // const path = store.baseUrl + 'registration/';
 
-
-        const path = "http://127.0.0.1:8000/registration"
-
+        const path = process.env.BASEURL + "registration"
 
         await axios
           .post(path, {

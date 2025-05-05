@@ -22,7 +22,7 @@ def verify_password(plain_password, hashed_password):
 
 # JWT Config
 class Settings(BaseModel):
-    authjwt_secret_key: str = os.getenv("JWT_SECRET_KEY") or "default_secret"
+    authjwt_secret_key: str = os.getenv("JWT_SECRET_KEY")
 
 @AuthJWT.load_config
 def get_config():
@@ -35,7 +35,7 @@ baseURL = os.getenv("BASE_URL")
 # CORS Configuration (restrict origins for production)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Replace with your frontend URL put it in .env
+    allow_origins=[os.getenv("BASE_URL")],  # Replace with your frontend URL put it in .env
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -134,7 +134,6 @@ async def login(data: LoginData, Authorize: AuthJWT = Depends()):
     
     access_token = Authorize.create_access_token(subject=data.email)
     return {"access_token": access_token, "user_id": user_id}
-
 
 
 # @app.get("/dashboard")

@@ -1,180 +1,3 @@
-<!-- <template>
-  <div class="p-4 bg-light min-vh-100">
-    <h2 class="mb-4">Dashboard</h2>
-
-    <div class="bg-white rounded-3 border p-4 p-md-5 mb-5 d-flex flex-column align-items-center shadow-sm">
-
-      <div class="text-center mb-3 w-100">
-        <h5 class="mb-3 h3">How many offers you want to get?</h5>
-        <div class="d-flex align-items-center justify-content-center counter mb-3 flex-wrap">
-          <button
-            class="btn btn-outline-primary rounded-circle px-3 py-2"
-            @click="decrementNumber"
-            :disabled="store.userFilledData === false"
-          >
-            <font-awesome-icon :icon="['fas', 'angle-left']"/>
-          </button>
-
-          <span class="fs-1 px-5 number">{{ number }}</span>
-
-          <button
-            class="btn btn-outline-primary rounded-circle px-3 py-2"
-            @click="incrementNumber"
-            :disabled="store.userFilledData === false"
-          >
-            <font-awesome-icon :icon="['fas', 'angle-right']"/>
-          </button>
-        </div>
-        <p class="fw-bold fs-5 mb-3">Choose your goal!</p>
-      </div>
-
-      <div class="d-flex justify-content-center w-100 mb-2">
-        <button
-          type="button"
-          class="btn btn-primary btn-lg fw-bold px-5 py-2"
-          :disabled="store.userFilledData === false"
-          @click="searchOffers"
-        >
-          Search jobs
-        </button>
-      </div>
-
-      <div
-        v-if="store.userFilledData === false"
-        class="text-secondary mt-4 fs-6 text-center"
-      >
-        Please fill in your data in the "About me" tab
-      </div>
-    </div>
-
-    <div class="row g-4 justify-content-center">
-      <div class="col-12 col-md-6">
-        <div class="card p-4 text-center shadow-sm h-100">
-          <h5 class="card-title mb-3">Progress</h5>
-          <div class="text-muted">
-            <font-awesome-icon :icon="['fas', 'chart-line']" size="3x" class="mb-2" />
-            <p>Progress chart will appear here soon.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-12 col-md-6">
-        <div class="card p-4 text-center shadow-sm h-100">
-          <h5 class="card-title mb-3">Analytics</h5>
-          <div class="text-muted">
-            <font-awesome-icon :icon="['fas', 'chart-pie']" size="3x" class="mb-2" />
-            <p>Analytics summary will be displayed here.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="mt-5 bg-white p-3 rounded-3 border shadow-sm">
-      <h4 class="mb-3">Your Offers</h4>
-      <div class="table-responsive">
-        <table class="table align-middle">
-          <thead class="table-light">
-            <tr>
-              <th>Company</th>
-              <th>Date</th>
-              <th>Position</th>
-              <th>Salary</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="offer in offers" :key="offer.link">
-              <td>{{ offer.company }}</td>
-              <td>{{ offer.date }}</td>
-              <td>{{ offer.position }}</td>
-              <td>{{ offer.salary }}</td>
-              <td>
-                <a :href="offer.link" target="_blank">сайт работодателя</a><br />
-                <span class="badge bg-warning mt-1">In Review</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</template>
-
-<script setup>
-import { store } from "../../script/store.js";
-</script>
-
-<script>
-export default {
-  name: "Dashboard",
-  methods: {
-    incrementNumber() {
-      if (this.number < 20) {
-        this.number += 1;
-      }
-    },
-    decrementNumber() {
-      if (this.number > 0) {
-        this.number -= 1;
-      }
-    },
-    async searchOffers() {
-      this.newOffer = {
-        company: "amoCrm",
-        date: "15 Dec 2024",
-        position: "Junior frontend developer",
-        salary: "до 50 000 ₽",
-        status: "awaiting",
-        link: "https://hh.ru/vacancy/111898417?hhtmFromLabel=suitable_vacancies&hhtmFrom=vacancy",
-      };
-
-      setTimeout(() => {
-        this.offers.push({ ...this.newOffer });
-      }, 5000);
-    },
-  },
-  data: () => ({
-    number: 0,
-    offers: [],
-    newOffer: {
-      company: "",
-      date: "",
-      position: "",
-      salary: "",
-      status: "",
-      link: "",
-    },
-  }),
-};
-</script>
-
-<style scoped>
-.counter {
-  min-height: 100px;
-}
-.number {
-  font-size: clamp(2rem, 9vw, 70px) !important;
-}
-
-.card {
-  height: 325px;
-}
-
-.card-title {
-  font-size: 1.5rem;
-}
-
-.table-light {
-  background-color: #f8f9fa;
-}
-
-.table-responsive {
-  max-height: 300px;
-  overflow-y: auto;
-}
-</style>
- -->
-
  <template>
   <div class="p-3 p-md-4 bg-light min-vh-100">
     <h2 class="mb-4">Дэшборд</h2>
@@ -246,15 +69,6 @@ export default {
           Найти вакансии
         </button>
 
-        <!-- <div v-if="store.userFilledData === false" class="alert alert-secondary mt-5 mx-auto pt-1" style="max-width: 450px; height: 35px">
-          Пожалуйста, заполните данные во вкладке "Резюме"
-        </div>
-
-        <div v-if="store.userAuthorizedWithHH === false" class="alert alert-secondary mx-auto pt-1" style="max-width: 450px; height: 60px">
-          Также нам нужно разрешение подаваться на вакансии хх.ру от вашего лица
-        </div> -->
-
-        <!-- В шаблоне замените текущие алерты на эти: -->
         <div 
           v-if="store.userFilledData === false" 
           class="modern-alert alert-info"
@@ -273,13 +87,21 @@ export default {
           class="modern-alert alert-warning"
         >
           <div class="alert-content">
-             <!-- <font-awesome-icon :icon="['fas', 'circle-info']" class="alert-icon"/> -->
-            <!-- <div> -->
-              <h6 class="alert-title">Требуется авторизация</h6>
-              <p class="alert-message">Нам нужно разрешение подаваться на вакансии hh.ru от вашего лица</p>
-            <!-- </div> -->
+            <h6 class="alert-title">Требуется авторизация</h6>
+            <p class="alert-message">
+              Нам нужно разрешение подаваться на вакансии hh.ru от вашего лица.
+              <a 
+                href="https://hh.ru/oauth/authorize?response_type=code&client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI" 
+                class="alert-link"
+                @click.prevent="handleAuthRedirect"
+              >
+                Предоставить доступ
+              </a>
+            </p>
           </div>
         </div>
+
+
       </div>
 
       <!-- Auto Mode Table -->
@@ -451,10 +273,15 @@ function submitSelected() {
   const selected = offers.value.filter(o => o.selected);
   alert(`Вы откликнулись на ${selected.length} вакансии.`);
 }
+function handleAuthRedirect() {
+  const clientId = process.env.HH_CLIENT_ID; // Замените на ваш client_id
+  const redirectUri = process.env.HH_REDIRECT_URL; // Ваш URL для callback
+
+  window.location.href = `https://hh.ru/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}`;
+}
 </script>
 
 <style scoped>
-/* Base styles */
 .form-switch .form-check-input {
   width: 2.5em;
   height: 1.4em;
@@ -613,15 +440,11 @@ function submitSelected() {
 .alert-info {
   background-color: #f0f7ff;
   color: #0066cc;
-  /* background-color: #fff8e6;
-  color: #e67e00; */
 }
 
 .alert-warning {
   background-color: #fff8e6;
   color: #e67e00;
-  /* background-color: #f0f7ff;
-  color: #0066cc; */
 }
 
 .alert-content {
@@ -658,5 +481,17 @@ function submitSelected() {
 .modern-alert:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.alert-link {
+  color: inherit;
+  text-decoration: underline;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.alert-link:hover {
+  color: #0056b3;
+  text-decoration: none;
 }
 </style>

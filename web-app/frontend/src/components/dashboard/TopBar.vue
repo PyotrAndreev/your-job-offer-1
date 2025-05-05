@@ -41,10 +41,6 @@
   </nav>
 </template>
 
-<script setup>
-import { store } from "../../script/store.js";
-</script>
-
 <script>
 export default {
   data() {
@@ -55,7 +51,6 @@ export default {
   mounted() {
     const savedData = localStorage.getItem("formData");
     if (savedData) {
-      // store.userFilledData = true;
       this.userName = JSON.parse(savedData).firstName;
     }
   },

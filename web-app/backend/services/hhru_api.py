@@ -1,8 +1,11 @@
 import requests
 import json
+import os
 
-client_id = "GES2OLI3SIBO9IEP71CQNM9P35M6FRG29SGD1JFICCRI2P2PQD6F5SBFQHLDO3LD"
-client_secret = "NV4JTC1JU0IJNQLBEQLSDDSOQ2RSMDFGNA3NI8UNAJT2R7IGUVIPVNELQU5DR8FG"
+load_dotenv()
+
+client_id = os.getenv("HH_CLIENT_ID")
+client_secret = os.getenv("HH_CLIENT_SECRET")
 
 def exchange_code_for_tokens(authorization_code):
 	global client_id, client_secret
