@@ -288,7 +288,14 @@ function decrementNumber() {
   if (number.value > 1) number.value--;
 }
 function searchOffers() {
-  offers.value = offers.value.map(o => ({ ...o, selected: false }));
+  if (isAutoMode.value) {
+
+    // Логика для автоматического поиска вакансий
+    alert(`Ищем ${number.value} вакансий...`);
+  } else {
+    // Логика для ручного поиска вакансий
+    alert(`Выберите понравившиеся вакансии из ${offers.value.length} предложений.`);
+  }
 }
 function toggleSelection(index) {
   offers.value[index].selected = !offers.value[index].selected;
