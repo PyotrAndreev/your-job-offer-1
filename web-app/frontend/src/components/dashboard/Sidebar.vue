@@ -3,7 +3,7 @@
     :class="[
       'd-flex border-end',
       'flex-column',
-      'vh-100',
+      'min-vh-100',
       { collapsed: isCollapsed },
     ]"
     id="sidebar"
@@ -14,7 +14,7 @@
     </div>
 
     <!-- Sidebar Content -->
-    <div class="flex-column p-3">
+    <div class="flex-column p-1 p-sm-3">
       <ul class="nav flex-column">
         <li class="nav-item py-1">
           <button
@@ -94,30 +94,34 @@ export default {
   align-items: center;
   border: none; /* Remove any default border */
   outline: none; /* Remove focus outline */
-  padding: 0.5rem; /* Ensure padding for spacing */
+  padding-top: 0.5rem; /* Ensure padding for spacing */
+  padding-bottom: 0.5rem; /* Ensure padding for spacing */
 }
-
-/* #sidebar .nav-item button.border-start {
-  border-left-width: 3px !important; 
-}
-
-#sidebar .nav-item button.border-primary {
-  border-color: #0d6efd !important;
-  border-radius: 0;
-} */
-
 button.active {
   background-color: #f8f9fa;
     /* font-weight: bold; */
 }
 
-/* button.border-start {
-  border-left-width: 4px !important; 
+/* #sidebar {
+  width: 250px;
+  transition: width 0.3s ease;
+}
+
+#sidebar.collapsed {
+  width: 60px;
 } */
 
-/* button.border-primary {
-  border-color: #0d6efd !important; 
+/* 👇 Адаптивность для мобильных устройств */
+/* @media (max-width: 576px) {
+  #sidebar {
+    width: 100px;
+  }
+
+  #sidebar.collapsed {
+    width: 50px;
+  }
 } */
+
 
 #sidebar .nav-item button span {
   transition: opacity 0.3s ease;

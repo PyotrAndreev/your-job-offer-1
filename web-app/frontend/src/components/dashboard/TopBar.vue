@@ -4,10 +4,10 @@
       <!-- Styled like a button -->
       <a
         href="./"
-        class="btn d-flex align-items-center gap-2 ms-3"
+        class="btn d-flex align-items-center gap-2 "
       >
         <font-awesome-icon :icon="['fas', 'house']" style="color: #0d6efd"/>
-        <span>Your job offer</span>
+        <span class="d-none d-sm-inline">Your job offer</span>
       </a>
 
       <!-- Styled Dropdown -->
