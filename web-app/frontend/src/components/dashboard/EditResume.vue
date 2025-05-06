@@ -238,9 +238,8 @@ export default {
         formData.append("age", parseInt(this.formData.age, 10));
         formData.append("gender", this.formData.gender);
 
-      
 
-        const path = process.env.BASEURL + "userData"
+        const path = import.meta.env.VITE_BASE_URL + "userData"
 
         // Send data to the server
         const response = await axios.post(

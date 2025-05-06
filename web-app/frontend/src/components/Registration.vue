@@ -102,7 +102,7 @@ export default {
           return;
         }
 
-        const path = process.env.BASEURL + "registration"
+        const path = import.meta.env.VITE_BASE_URL + "registration"
 
         await axios
           .post(path, {

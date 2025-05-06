@@ -11,6 +11,9 @@ from passlib.context import CryptContext
 
 load_dotenv()
 
+
+
+
 # Secure Password Hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -35,7 +38,7 @@ baseURL = os.getenv("BASE_URL")
 # CORS Configuration (restrict origins for production)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("BASE_URL")],  # Replace with your frontend URL put it in .env
+    allow_origins=["*"],  # Replace with your frontend URL put it in .env
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -47,6 +50,27 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 
 ALLOWED_EXTENSIONS = {'pdf'}
+
+from services.hhru_api import exchange_code_for_tokens
+
+class CodeExchangeRequest(BaseModel):
+    code: str
+    user_id: str
+
+@app.post("/exchange")
+def exchange_code(data: CodeExchangeRequest):
+    user_id = data.user_id
+    code = data.code
+
+    access_token, refresh_token = exchange_code_for_tokens(code)
+
+    if access_token is None or refresh_token is None:
+        raise HTTPException(status_code=400, detail="Ошибка при обмене authorization_code")
+
+    add_tokens(user_id, refresh_token, access_token)
+
+    return {"message": "Tokens exchanged successfully"}
+
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS

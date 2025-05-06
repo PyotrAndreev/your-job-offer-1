@@ -44,7 +44,7 @@
           <button
             class="btn btn-outline-primary rounded-circle px-2 px-md-3 py-1 py-md-2"
             @click="decrementNumber"
-            :disabled="store.userFilledData === false"
+            :disabled="store.userFilledData === false || store.userAuthorizedWithHH === false"
           >
             <font-awesome-icon :icon="['fas', 'angle-left']" />
           </button>
@@ -54,7 +54,7 @@
           <button
             class="btn btn-outline-primary rounded-circle px-2 px-md-3 py-1 py-md-2"
             @click="incrementNumber"
-            :disabled="store.userFilledData === false"
+            :disabled="store.userFilledData === false || store.userAuthorizedWithHH === false"
           >
             <font-awesome-icon :icon="['fas', 'angle-right']" />
           </button>
@@ -63,7 +63,7 @@
         <button
           type="button"
           class="btn btn-primary btn-md btn-lg fw-bold px-4 px-md-5 py-1 py-md-2"
-          :disabled="store.userFilledData === false"
+          :disabled="store.userFilledData === false || store.userAuthorizedWithHH === false"
           @click="searchOffers"
         >
           Найти вакансии
@@ -89,7 +89,7 @@
           <div class="alert-content">
             <h6 class="alert-title">Требуется авторизация</h6>
             <p class="alert-message">
-              Нам нужно разрешение подаваться на вакансии hh.ru от вашего лица.
+              Нам нужно разрешение подаваться на вакансии hh.ru от вашего лица. (Убедитесь, что у вас есть резюме на hh.ru)
               <a 
                 href="https://hh.ru/oauth/authorize?response_type=code&client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI" 
                 class="alert-link"
@@ -201,6 +201,30 @@
 <script setup>
 import { ref } from "vue";
 import { store } from "../../script/store.js";
+import { onMounted } from "vue";
+
+
+onMounted(async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get("code");
+
+  if (code) {
+    try {
+      const response = await axios.post(import.meta.env.VITE_BASE_URL + "exchange", { code: code,
+        user_id: localStorage.getItem("user_id") 
+       });
+    
+
+      console.log(response.data);
+      store.userAuthorizedWithHH = true;
+
+      // Очищаем URL от параметров
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } catch (err) {
+      console.error("Ошибка при обмене кода на токен:", err);
+    }
+  }
+});
 
 const number = ref(3);
 const isAutoMode = ref(false);
@@ -274,9 +298,8 @@ function submitSelected() {
   alert(`Вы откликнулись на ${selected.length} вакансии.`);
 }
 function handleAuthRedirect() {
-  const clientId = process.env.HH_CLIENT_ID; // Замените на ваш client_id
-  const redirectUri = process.env.HH_REDIRECT_URL; // Ваш URL для callback
-
+  const clientId = import.meta.env.VITE_HH_CLIENT_ID; // Замените на ваш client_id
+  const redirectUri = import.meta.env.VITE_HH_REDIRECT_URL; // Ваш URL для callback
   window.location.href = `https://hh.ru/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}`;
 }
 </script>
@@ -491,7 +514,7 @@ function handleAuthRedirect() {
 }
 
 .alert-link:hover {
-  color: #0056b3;
-  text-decoration: none;
+  color: #ba6b27;
+  text-decoration: underline;
 }
 </style>

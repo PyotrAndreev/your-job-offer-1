@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     async login() {
-      const path = process.env.BASEURL + "login"
+      const path = import.meta.env.VITE_BASE_URL + "login"
 
       if (this.email && this.password) {
         let msg = "";
