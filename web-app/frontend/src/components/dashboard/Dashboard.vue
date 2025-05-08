@@ -44,7 +44,7 @@
           <button
             class="btn btn-outline-primary rounded-circle px-2 px-md-3 py-1 py-md-2"
             @click="decrementNumber"
-            :disabled="JSON.parse(localStorage.getItem('userFilledData')) === false || JSON.parse(localStorage.getItem('userAuthorizedWithHH')) === false"
+            :disabled="!isUserFilled || !isUserAuthorized"
           >
             <font-awesome-icon :icon="['fas', 'angle-left']" />
           </button>
@@ -54,7 +54,7 @@
           <button
             class="btn btn-outline-primary rounded-circle px-2 px-md-3 py-1 py-md-2"
             @click="incrementNumber"
-            :disabled="JSON.parse(localStorage.getItem('userFilledData')) === false || JSON.parse(localStorage.getItem('userAuthorizedWithHH')) === false"
+            :disabled="!isUserFilled || !isUserAuthorized"
           >
             <font-awesome-icon :icon="['fas', 'angle-right']" />
           </button>
@@ -63,14 +63,14 @@
         <button
           type="button"
           class="btn btn-primary btn-md btn-lg fw-bold px-4 px-md-5 py-1 py-md-2"
-          :disabled="JSON.parse(localStorage.getItem('userFilledData')) === false || JSON.parse(localStorage.getItem('userAuthorizedWithHH')) === false"
+          :disabled="!isUserFilled || !isUserAuthorized"
           @click="searchOffers"
         >
           Найти вакансии
         </button>
 
         <div 
-          v-if="JSON.parse(localStorage.getItem('userFilledData')) === false" 
+          v-if="!isUserFilled" 
           class="modern-alert alert-info"
         >
           <div class="alert-content">
@@ -83,7 +83,7 @@
         </div>
 
         <div 
-          v-if="JSON.parse(localStorage.getItem('userAuthorizedWithHH')) === false" 
+          v-if="!isUserAuthorized" 
           class="modern-alert alert-warning"
         >
           <div class="alert-content">
@@ -203,6 +203,15 @@ import { ref } from "vue";
 import { store } from "../../script/store.js";
 import { onMounted } from "vue";
 
+import { computed } from 'vue';
+
+const isUserFilled = computed(() => {
+  return JSON.parse(localStorage.getItem('userFilledData') || 'false');
+});
+
+const isUserAuthorized = computed(() => {
+  return JSON.parse(localStorage.getItem('userAuthorizedWithHH') || 'false');
+});
 
 onMounted(async () => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -231,6 +240,8 @@ const isAutoMode = ref(false);
 const showTooltip = ref(false);
 
 const offers = ref([]);
+
+
 
 function incrementNumber() {
   if (number.value < 20) number.value++;
