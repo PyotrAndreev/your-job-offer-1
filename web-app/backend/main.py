@@ -80,7 +80,6 @@ class GetVacancies(BaseModel):
     user_id: str
     number_of_vacancies: str
 
-
 @app.get("/get_vacancies")
 def get_vacancies(data: GetVacancies):
     user_id = data.user_id

@@ -44,7 +44,7 @@
           <button
             class="btn btn-outline-primary rounded-circle px-2 px-md-3 py-1 py-md-2"
             @click="decrementNumber"
-            :disabled="store.userFilledData === false || store.userAuthorizedWithHH === false"
+            :disabled="JSON.parse(localStorage.getItem('userFilledData')) === false || JSON.parse(localStorage.getItem('userAuthorizedWithHH')) === false"
           >
             <font-awesome-icon :icon="['fas', 'angle-left']" />
           </button>
@@ -54,7 +54,7 @@
           <button
             class="btn btn-outline-primary rounded-circle px-2 px-md-3 py-1 py-md-2"
             @click="incrementNumber"
-            :disabled="store.userFilledData === false || store.userAuthorizedWithHH === false"
+            :disabled="JSON.parse(localStorage.getItem('userFilledData')) === false || JSON.parse(localStorage.getItem('userAuthorizedWithHH')) === false"
           >
             <font-awesome-icon :icon="['fas', 'angle-right']" />
           </button>
@@ -63,14 +63,14 @@
         <button
           type="button"
           class="btn btn-primary btn-md btn-lg fw-bold px-4 px-md-5 py-1 py-md-2"
-          :disabled="store.userFilledData === false || store.userAuthorizedWithHH === false"
+          :disabled="JSON.parse(localStorage.getItem('userFilledData')) === false || JSON.parse(localStorage.getItem('userAuthorizedWithHH')) === false"
           @click="searchOffers"
         >
           Найти вакансии
         </button>
 
         <div 
-          v-if="store.userFilledData === false" 
+          v-if="JSON.parse(localStorage.getItem('userFilledData')) === false" 
           class="modern-alert alert-info"
         >
           <div class="alert-content">
@@ -83,7 +83,7 @@
         </div>
 
         <div 
-          v-if="store.userAuthorizedWithHH === false" 
+          v-if="JSON.parse(localStorage.getItem('userAuthorizedWithHH')) === false" 
           class="modern-alert alert-warning"
         >
           <div class="alert-content">
@@ -214,9 +214,9 @@ onMounted(async () => {
         user_id: localStorage.getItem("user_id") 
        });
     
-
       console.log(response.data);
-      store.userAuthorizedWithHH = true;
+      // store.userAuthorizedWithHH = true;
+      localStorage.setItem("userAuthorizedWithHH", JSON.stringify(true));
 
       // Очищаем URL от параметров
       window.history.replaceState({}, document.title, window.location.pathname);
@@ -226,7 +226,7 @@ onMounted(async () => {
   }
 });
 
-const number = ref(3);
+const number = ref(0);
 const isAutoMode = ref(false);
 const showTooltip = ref(false);
 
@@ -235,9 +235,11 @@ const offers = ref([]);
 function incrementNumber() {
   if (number.value < 20) number.value++;
 }
+
 function decrementNumber() {
   if (number.value > 1) number.value--;
 }
+
 async function searchOffers() {
   try {
     const userId = localStorage.getItem("user_id");

@@ -204,7 +204,8 @@ export default {
       localStorage.setItem("formData", JSON.stringify(this.formData));
     },
     async submit() {
-      store.userFilledData = true;
+      localStorage.setItem("userFilledData", JSON.stringify(true));
+      // store.userFilledData = true;
       try {
         const formData = new FormData();
         const resumeFile = document.getElementById("upload").files[0];
