@@ -264,26 +264,59 @@ async function searchOffers() {
     const { job_titles, vacancies_id } = response.data;
 
     offers.value = job_titles.map((title, index) => ({
-      company: "Компания", // Можно добавить в бэкенде
-      date: new Date().toLocaleDateString("ru-RU"), // или верни с бэка
+      company: "Компания", // замените если есть в ответе
+      date: new Date().toLocaleDateString("ru-RU"),
       position: title,
-      salary: "не указано", // или верни с бэка
-      link: "#", // или верни с бэка
-      vacancyId: vacancies_id[index], // сохраняем ID
+      salary: "не указано",
+      link: "#",
+      vacancyId: vacancies_id[index],
       selected: false
     }));
-  } catch (err) {
-    console.error("Ошибка при получении вакансий:", err);
-  }
 
+    if (isAutoMode.value) {
+      await axios.get(import.meta.env.VITE_BASE_URL + "apply_vacancies", {
+        params: {
+          user_id: userId,
+          vacancies_id: vacancies_id,
+        },
+      });
+    }
+
+  } catch (err) {
+    console.error("Ошибка при получении или автоподаче:", err);
+  }
 }
+
 function toggleSelection(index) {
   offers.value[index].selected = !offers.value[index].selected;
 }
-function submitSelected() {
+
+async function submitSelected() {
   const selected = offers.value.filter(o => o.selected);
-  alert(`Вы откликнулись на ${selected.length} вакансии.`);
+
+  if (selected.length === 0) {
+    alert("Выберите хотя бы одну вакансию.");
+    return;
+  }
+
+  const userId = localStorage.getItem("user_id");
+  const selectedIds = selected.map(o => o.vacancyId);
+
+  try {
+    await axios.get(import.meta.env.VITE_BASE_URL + "apply_vacancies", {
+      params: {
+        user_id: userId,
+        vacancies_id: selectedIds,
+      },
+    });
+
+    alert(`Отклики отправлены на ${selected.length} вакансии.`);
+  } catch (err) {
+    console.error("Ошибка при отправке откликов:", err);
+    alert("Ошибка при отправке откликов.");
+  }
 }
+
 function handleAuthRedirect() {
   const clientId = import.meta.env.VITE_HH_CLIENT_ID; // Замените на ваш client_id
   const redirectUri = import.meta.env.VITE_HH_REDIRECT_URL; // Ваш URL для callback
