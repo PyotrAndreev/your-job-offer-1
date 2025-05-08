@@ -16,7 +16,7 @@ def exchange_code_for_tokens(authorization_code):
 		"client_id": client_id,
 		"client_secret": client_secret,
 		"code": authorization_code,
-		"redirect_uri" : "https://github.com/yn864/your-job-offer.git"
+		"redirect_uri" : " http://194.67.88.90"
 	}
 
 	headers = {
