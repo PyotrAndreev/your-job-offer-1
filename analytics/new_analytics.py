@@ -189,8 +189,8 @@ new_data = [
     'Проведение A/B тестирования для оптимизации бизнес-процессов'
 ]
 
-'''new_X = vectorizer.transform(new_data)
+new_X = vectorizer.transform(new_data)
 
 predictions = model.predict(new_X)
 for description, category in zip(new_data, predictions):
-    print(f'Описание: "{description}" -> Область: {category}')'''
+    print(f'Описание: "{description}" -> Область: {category}')
