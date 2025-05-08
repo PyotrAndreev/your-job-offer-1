@@ -39,34 +39,7 @@ from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_sc
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.metrics import classification_report
-from sklearn.model_selection import StratifiedKFold
-from nltk.tokenize import word_tokenize
-from nltk.stem import WordNetLemmatizer
-from nltk.corpus import stopwords
-import string
-import re
 
-
-# Функция нормализации текста
-def normalize_text(text):
-    # Приводим текст к нижнему регистру
-    text = text.lower()
-
-    # Токенизация текста
-    tokens = word_tokenize(text)
-
-    # Лемматизация
-    lemmatizer = WordNetLemmatizer()
-    tokens = [lemmatizer.lemmatize(w) for w in tokens]
-
-    # Удаление стоп-слов и знаков препинания
-    tokens = [word for word in tokens if word.isalnum()]
-    tokens = [word for word in tokens if word not in stopwords.words('english')]
-
-    return ' '.join(tokens)
-
-
-# Исходные данные
 data = {
     'job_description': [
         'Development of web applications using Python and Django framework.',
@@ -115,57 +88,19 @@ data = {
         'Data Analytics'
     ]
 }
-
-# Создаем DataFrame
 df = pd.DataFrame(data)
 
-# Нормализуем текст
-df['normalized_job_description'] = df['job_description'].apply(normalize_text)
-
-# Создаем TF-IDF Vectorizer
 vectorizer = TfidfVectorizer()
-X = vectorizer.fit_transform(df['normalized_job_description'])
+X = vectorizer.fit_transform(df['job_description'])
 y = df['category']
 
-# Разбивка на тренировочный и тестовый наборы
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Выбор модели и настройка гиперпараметров
-models = [
-    {'name': 'Logistic Regression', 'estimator': LogisticRegression()},
-    {'name': 'Random Forest', 'estimator': RandomForestClassifier()},
-    {'name': 'Gradient Boosting', 'estimator': GradientBoostingClassifier()}
-]
+model = LogisticRegression()
+model.fit(X_train, y_train)
 
-best_params = {}
-for model in models:
-    print(f"\n\nOptimizing {model['name']}...")
-    param_grid = {
-        'C': [0.1, 1, 10],  # Параметр регуляризации для LR
-        'solver': ['lbfgs', 'liblinear'],  # Метод оптимизации для LR
-        'n_estimators': [50, 100, 200],  # Количество деревьев для RF и GB
-        'max_depth': [None, 10, 20],  # Максимальная глубина дерева
-        'min_samples_leaf': [1, 2, 4],  # Минимальное число образцов в листовом узле
-    }
-
-    grid_search = GridSearchCV(model['estimator'], param_grid, cv=StratifiedKFold(n_splits=2), scoring='accuracy')
-    grid_search.fit(X_train, y_train)
-
-    best_params[model['name']] = grid_search.best_params_
-    print(f"Best parameters found: {grid_search.best_params_}")
-
-# Тренировка лучших моделей с найденными гиперпараметрами
-best_models = []
-for model in models:
-    estimator = model['estimator'].set_params(**best_params.get(model['name']))
-    estimator.fit(X_train, y_train)
-    best_models.append((model['name'], estimator))
-
-# Тестирование всех моделей
-for name, model in best_models:
-    y_pred = model.predict(X_test)
-    report = classification_report(y_test, y_pred)
-    print(f'\nPerformance of {name}:\n{report}')
+y_pred = model.predict(X_test)
+print(classification_report(y_test, y_pred))
 
 new_data = [
     # Web Development
