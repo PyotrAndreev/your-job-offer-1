@@ -72,7 +72,7 @@ def exchange_code(data: CodeExchangeRequest):
     return {"message": "Tokens exchanged successfully"}
 
 from services.new_matcher import search_vacancies_for_user
-from backend.database.db_functions import get_hh_access_token, create_submission
+from database.db_functions import get_hh_access_token, create_submission
 from services.hhru_api import get_users_last_resume_id, apply_for_vacancy
 from datetime import datetime
 

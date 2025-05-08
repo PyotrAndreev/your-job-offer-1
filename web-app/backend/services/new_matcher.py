@@ -3,7 +3,7 @@ import requests
 from concurrent.futures import ThreadPoolExecutor
 import heapq
 
-from backend.database.db_functions import get_all_vacancies, get_resume, create_resume
+from database.db_functions import get_all_vacancies, get_resume, create_resume
 
 
 ## модель: на вход принимаем айдишник пользователя -> находим в бд его резюме (если есть) ->

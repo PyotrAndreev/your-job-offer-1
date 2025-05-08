@@ -230,16 +230,7 @@ const number = ref(3);
 const isAutoMode = ref(false);
 const showTooltip = ref(false);
 
-const offers = ref([
-  {
-    company: "SberTech",
-    date: "25 Dec 2024",
-    position: "Angular Developer",
-    salary: "до 80 000 ₽",
-    link: "https://hh.ru/vacancy/456789123",
-    selected: false
-  },
-]);
+const offers = ref([]);
 
 function incrementNumber() {
   if (number.value < 20) number.value++;
