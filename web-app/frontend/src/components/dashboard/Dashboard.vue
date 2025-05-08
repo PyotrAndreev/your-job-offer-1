@@ -232,30 +232,6 @@ const showTooltip = ref(false);
 
 const offers = ref([
   {
-    company: "amoCRM",
-    date: "15 Dec 2024",
-    position: "Frontend Developer",
-    salary: "до 50 000 ₽",
-    link: "https://hh.ru/vacancy/111898417",
-    selected: false
-  },
-  {
-    company: "Yandex",
-    date: "20 Dec 2024",
-    position: "Junior React Dev",
-    salary: "до 60 000 ₽",
-    link: "https://hh.ru/vacancy/123456789",
-    selected: false
-  },
-  {
-    company: "VK",
-    date: "22 Dec 2024",
-    position: "Vue.js Developer",
-    salary: "до 70 000 ₽",
-    link: "https://hh.ru/vacancy/987654321",
-    selected: false
-  },
-  {
     company: "SberTech",
     date: "25 Dec 2024",
     position: "Angular Developer",
@@ -263,22 +239,6 @@ const offers = ref([
     link: "https://hh.ru/vacancy/456789123",
     selected: false
   },
-  {
-    company: "Tinkoff",
-    date: "28 Dec 2024",
-    position: "Fullstack Developer",
-    salary: "до 90 000 ₽",
-    link: "https://hh.ru/vacancy/321654987",
-    selected: false
-  },
-  {
-    company: "Ozon",
-    date: "30 Dec 2024",
-    position: "Node.js Developer",
-    salary: "до 100 000 ₽",
-    link: "https://hh.ru/vacancy/654987321",
-    selected: false
-  }
 ]);
 
 function incrementNumber() {
@@ -287,15 +247,35 @@ function incrementNumber() {
 function decrementNumber() {
   if (number.value > 1) number.value--;
 }
-function searchOffers() {
-  if (isAutoMode.value) {
+async function searchOffers() {
+  try {
+    const userId = localStorage.getItem("user_id");
 
-    // Логика для автоматического поиска вакансий
-    alert(`Ищем ${number.value} вакансий...`);
-  } else {
-    // Логика для ручного поиска вакансий
-    alert(`Выберите понравившиеся вакансии из ${offers.value.length} предложений.`);
+    const response = await axios.get(
+      import.meta.env.VITE_BASE_URL + "get_vacancies",
+      {
+        params: {
+          user_id: userId,
+          number_of_vacancies: number.value,
+        },
+      }
+    );
+
+    const { job_titles, vacancies_id } = response.data;
+
+    offers.value = job_titles.map((title, index) => ({
+      company: "Компания", // Можно добавить в бэкенде
+      date: new Date().toLocaleDateString("ru-RU"), // или верни с бэка
+      position: title,
+      salary: "не указано", // или верни с бэка
+      link: "#", // или верни с бэка
+      vacancyId: vacancies_id[index], // сохраняем ID
+      selected: false
+    }));
+  } catch (err) {
+    console.error("Ошибка при получении вакансий:", err);
   }
+
 }
 function toggleSelection(index) {
   offers.value[index].selected = !offers.value[index].selected;

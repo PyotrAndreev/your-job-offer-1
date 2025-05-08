@@ -1,8 +1,8 @@
 <template>
   <div class="wrapper bg-light">
     <div class="container py-5">
-      <h2 class="mb-4">Профиль</h2>
-      <div class="wrapper bg-white mt-4 p-4 rounded-3 border">
+      <h2 class="mb-4 text-center text-md-start">Профиль</h2>
+      <div class="wrapper bg-white mt-4 p-2 p-sm-4 rounded-3 border">
         <form
           @submit.prevent="submit"
           class="align-items-center d-flex flex-column"
@@ -11,7 +11,7 @@
           <div class="text-center mb-4 d-flex align-items-center flex-column">
             <label
               for="image"
-              class="btn btn-outline-primary rounded-circle border-primary border-2 pad"
+              class="btn btn-outline-primary rounded-circle border-primary border-2 p-4 p-sm-5"
               :style="imagePreviewStyle"
             >
               <font-awesome-icon
@@ -28,12 +28,12 @@
                 @change="previewImage"
               />
             </label>
-
             <p class="mt-2 fs-5">Загрузите фото</p>
           </div>
-          <div class="row g-3 w-60 row-gap-2">
-            <div class="col-md-12 justfiy-content-center">
-              <label for="upload" class="form-label ">Загрузите pdf файл с резюме</label>
+
+          <div class="row g-3 w-100 w-md-75 w-lg-60 mx-auto row-gap-2">
+            <div class="col-md-12">
+              <label for="upload" class="form-label">Загрузите pdf файл с резюме</label>
               <input
                 class="form-control py-2 border-2"
                 type="file"
@@ -43,9 +43,7 @@
               />
             </div>
             <div class="col-md-6">
-              <label for="firstName" class="form-label "
-                >Имя</label
-              >
+              <label for="firstName" class="form-label">Имя</label>
               <input
                 v-model="formData.firstName"
                 type="text"
@@ -56,7 +54,7 @@
               />
             </div>
             <div class="col-md-6">
-              <label for="lastName" class="form-label ">Фамилия</label>
+              <label for="lastName" class="form-label">Фамилия</label>
               <input
                 v-model="formData.lastName"
                 type="text"
@@ -66,7 +64,7 @@
               />
             </div>
             <div class="col-md-6">
-              <label for="country" class="form-label ">Страна</label>
+              <label for="country" class="form-label">Страна</label>
               <input
                 v-model="formData.country"
                 type="text"
@@ -76,7 +74,7 @@
               />
             </div>
             <div class="col-md-6">
-              <label for="education" class="form-label ">Город</label>
+              <label for="city" class="form-label">Город</label>
               <input
                 v-model="formData.city"
                 type="text"
@@ -86,7 +84,7 @@
               />
             </div>
             <div class="col-md-6">
-              <label for="country" class="form-label ">Образование</label>
+              <label for="education" class="form-label">Образование</label>
               <input
                 v-model="formData.education"
                 type="text"
@@ -96,37 +94,37 @@
               />
             </div>
             <div class="col-md-6">
-              <label for="education" class="form-label ">Должность</label>
+              <label for="position" class="form-label">Должность</label>
               <input
                 v-model="formData.position"
                 type="text"
                 class="form-control py-2 border-2"
-                id="postition"
+                id="position"
                 placeholder="Укажите желаемую должность"
               />
             </div>
             <div class="col-md-6">
-              <label for="country" class="form-label ">Опыт</label>
-              <input
+              <label for="experience" class="form-label">Опыт</label>
+              <textarea
                 v-model="formData.experience"
-                type="text"
                 class="form-control py-2 border-2"
                 id="experience"
                 placeholder="Опишите ваш опыт"
-              />
+                rows="3"
+              ></textarea>
             </div>
             <div class="col-md-6">
-              <label for="education" class="form-label ">Навыки</label>
-              <input
+              <label for="skills" class="form-label">Навыки</label>
+              <textarea
                 v-model="formData.skills"
-                type="text"
                 class="form-control py-2 border-2"
                 id="skills"
                 placeholder="Опишите ваши навыки"
-              />
+                rows="3"
+              ></textarea>
             </div>
             <div class="col-md-6">
-              <label for="age" class="form-label ">Возраст</label>
+              <label for="age" class="form-label">Возраст</label>
               <input
                 v-model="formData.age"
                 type="number"
@@ -136,7 +134,7 @@
               />
             </div>
             <div class="col-md-6">
-              <label for="gender" class="form-label ">Пол</label>
+              <label for="gender" class="form-label">Пол</label>
               <select
                 v-model="formData.gender"
                 id="gender"
@@ -181,12 +179,11 @@ export default {
         age: "",
         gender: "",
       },
-      imagePreviewStyle: {}, // For the image preview
-      userId: localStorage.getItem("user_id"), // Get user_id from localStorage
+      imagePreviewStyle: {},
+      userId: localStorage.getItem("user_id"),
     };
   },
   methods: {
-    // Preview uploaded image and save as base64
     previewImage(event) {
       const file = event.target.files[0];
       if (file) {
@@ -203,28 +200,16 @@ export default {
         reader.readAsDataURL(file);
       }
     },
-
-    // Save form data to localStorage
     saveForm() {
       localStorage.setItem("formData", JSON.stringify(this.formData));
     },
-
-    // // Submit form data to the backend
     async submit() {
-      store.userFilledData = true; // Set store flag to indicate data submission
+      store.userFilledData = true;
       try {
         const formData = new FormData();
         const resumeFile = document.getElementById("upload").files[0];
-
-        // if (resumeFile) {
-          // console.log(2)
-          // alert("Please upload a resume.");
-          // return;
-        // }
-
-        // Append data to FormData
         if (this.userId) {
-          formData.append("user_id", this.userId); // Include user_id for updates
+          formData.append("user_id", this.userId);
         }
         formData.append("first_name", this.formData.firstName);
         formData.append("last_name", this.formData.lastName);
@@ -238,45 +223,27 @@ export default {
         formData.append("age", parseInt(this.formData.age, 10));
         formData.append("gender", this.formData.gender);
 
+        const path = import.meta.env.VITE_BASE_URL + "userData";
 
-        const path = import.meta.env.VITE_BASE_URL + "userData"
+        const response = await axios.post(path, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
 
-        // Send data to the server
-        const response = await axios.post(
-          path,
-          formData,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-          }
-        );
-
-        console.log("Ответ сервера:", response.data);
-
-        const message = response.data.message;
-
-        alert(`${message}! Спасибо!`);
+        alert(`${response.data.message}! Спасибо!`);
       } catch (error) {
         if (error.response) {
-          console.error("Server responded with:", error.response.data);
-          alert(`Error: ${error.response.data.detail || "Invalid request."}`);
+          alert(`Ошибка: ${error.response.data.detail || "Неверный запрос"}`);
         } else {
-          console.error("Request error:", error);
-          alert(
-            "Что-то пошло не так, пожалуйста, попробуйте снова"
-          );
+          alert("Что-то пошло не так, пожалуйста, попробуйте снова.");
         }
       }
     },
-
- 
   },
   mounted() {
-    // Load saved data from localStorage
     const savedData = localStorage.getItem("formData");
     if (savedData) {
       this.formData = JSON.parse(savedData);
     }
-
     const savedImage = localStorage.getItem("imagePreview");
     if (savedImage) {
       this.imagePreviewStyle = {
@@ -286,13 +253,10 @@ export default {
         border: "none",
       };
     }
-
-    // Fetch user data from server if needed
-    // this.fetchUserData();
   },
   watch: {
     formData: {
-      handler: "saveForm", // Automatically save form data on change
+      handler: "saveForm",
       deep: true,
     },
   },
@@ -311,5 +275,25 @@ button.btn-outline-primary {
 
 .w-60 {
   width: 60%;
+}
+
+textarea.form-control {
+  resize: vertical;
+}
+
+@media (max-width: 576px) {
+  .input-expandable {
+    width: 100%;
+  }
+
+  button.btn-outline-primary {
+    width: 80px;
+    height: 80px;
+  }
+
+  textarea.form-control {
+    resize: both;
+    min-height: 120px;
+  }
 }
 </style>
