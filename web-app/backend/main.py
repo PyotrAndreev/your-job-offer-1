@@ -77,14 +77,11 @@ class GetVacancies(BaseModel):
     user_id: str
     number_of_vacancies: str
 
-from database.parser_yjo import run_hh_import
+
 
 @app.post("/get_vacancies")
 def get_vacancies(data: GetVacancies):
 
-    run_hh_import()
-
-    
     user_id = data.user_id
     count_of_vacancies = data.number_of_vacancies
     list_of_best_vacancies = search_vacancies_for_user(user_id, count_of_vacancies)

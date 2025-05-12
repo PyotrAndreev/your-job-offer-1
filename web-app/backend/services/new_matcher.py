@@ -2,7 +2,7 @@ from rapidfuzz import fuzz
 import requests
 from concurrent.futures import ThreadPoolExecutor
 
-from data_base.db_functions import get_all_vacancies, get_resume
+from database.db_functions import get_all_vacancies, get_resume
 
 
 ## модель: на вход принимаем айдишник пользователя -> находим в бд его резюме (если есть) ->
