@@ -11,9 +11,6 @@ from passlib.context import CryptContext
 
 load_dotenv()
 
-
-
-
 # Secure Password Hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -62,10 +59,10 @@ def exchange_code(data: CodeExchangeRequest):
     user_id = data.user_id
     code = data.code
 
-    access_token, refresh_token = exchange_code_for_tokens(code)
+    access_token, refresh_token, response = exchange_code_for_tokens(code)
 
     if access_token is None or refresh_token is None:
-        raise HTTPException(status_code=400, detail="Ошибка при обмене authorization_code")
+        raise HTTPException(status_code=400, detail=("Ошибка при обмене authorization_code" + str(response)))
 
     add_tokens(user_id, refresh_token, access_token)
 
@@ -80,15 +77,21 @@ class GetVacancies(BaseModel):
     user_id: str
     number_of_vacancies: str
 
-@app.get("/get_vacancies")
+from database.parser_yjo import run_hh_import
+
+@app.post("/get_vacancies")
 def get_vacancies(data: GetVacancies):
+
+    run_hh_import()
+
+    
     user_id = data.user_id
     count_of_vacancies = data.number_of_vacancies
     list_of_best_vacancies = search_vacancies_for_user(user_id, count_of_vacancies)
     job_titles = [lst[2] for lst in list_of_best_vacancies]
-    vacancies_id = [lst[1] for lst in list_of_best_vacancies]
+    vacancies_id = [lst[3] for lst in list_of_best_vacancies]
 
-    return {job_titles: job_titles, vacancies_id: vacancies_id}
+    return {"job_titles": job_titles, "vacancies_id": vacancies_id}
 
 class ApplyVacancies(BaseModel):
     user_id: str
@@ -103,8 +106,8 @@ def apply_vacancies(data: ApplyVacancies):
     resume_id = get_users_last_resume_id(access_token)
 
     for vacancy_id in vacancies_id:
-        apply_for_vacancy(access_token, resume_id, vacancy_id[1])
-        create_submission(resume_id, "started", datetime.now(), vacancy_id[1])
+        apply_for_vacancy(access_token, resume_id, vacancy_id, "")
+        create_submission(resume_id, "started", datetime.now(), vacancy_id)
 
     return {"message": "Vacancies applied successfully"}
 

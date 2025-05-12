@@ -91,7 +91,7 @@
             <p class="alert-message">
               Нам нужно разрешение подаваться на вакансии hh.ru от вашего лица. (Убедитесь, что у вас есть резюме на hh.ru)
               <a 
-                href="https://hh.ru/oauth/authorize?response_type=code&client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI" 
+                href="" 
                 class="alert-link"
                 @click.prevent="handleAuthRedirect"
               >
@@ -204,6 +204,10 @@ import { store } from "../../script/store.js";
 import { onMounted } from "vue";
 import axios from "axios";
 import { computed } from 'vue';
+const clientId = import.meta.env.VITE_CLIENT_ID;
+const redirectUri = import.meta.env.VITE_REDIRECT_URI;
+
+const hhAuthUrl = `https://hh.ru/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}`;
 
 const isUserFilled = computed(() => {
   return JSON.parse(localStorage.getItem('userFilledData') || 'false');
@@ -227,6 +231,7 @@ onMounted(async () => {
       // store.userAuthorizedWithHH = true;
       localStorage.setItem("userAuthorizedWithHH", JSON.stringify(true));
 
+      window.location.reload()
       // Очищаем URL от параметров
       window.history.replaceState({}, document.title, window.location.pathname);
     } catch (err) {
@@ -242,7 +247,6 @@ const showTooltip = ref(false);
 const offers = ref([]);
 
 
-
 function incrementNumber() {
   if (number.value < 20) number.value++;
 }
@@ -255,17 +259,16 @@ async function searchOffers() {
   try {
     const userId = localStorage.getItem("user_id");
 
-    const response = await axios.get(
+    const response = await axios.post(
       import.meta.env.VITE_BASE_URL + "get_vacancies",
       {
-        params: {
           user_id: userId,
           number_of_vacancies: number.value,
-        },
       }
     );
 
     const { job_titles, vacancies_id } = response.data;
+    сonsole.log("Полученные вакансии:", job_titles, vacancies_id, response);
 
     offers.value = job_titles.map((title, index) => ({
       company: "Компания", // замените если есть в ответе
@@ -277,12 +280,12 @@ async function searchOffers() {
       selected: false
     }));
 
+    console.log("Офферы сформированы:", offers.value);
+
     if (isAutoMode.value) {
-      await axios.get(import.meta.env.VITE_BASE_URL + "apply_vacancies", {
-        params: {
+      await axios.post(import.meta.env.VITE_BASE_URL + "apply_vacancies", {
           user_id: userId,
           vacancies_id: vacancies_id,
-        },
       });
     }
 
@@ -307,11 +310,11 @@ async function submitSelected() {
   const selectedIds = selected.map(o => o.vacancyId);
 
   try {
-    await axios.get(import.meta.env.VITE_BASE_URL + "apply_vacancies", {
-      params: {
+    await axios.post(import.meta.env.VITE_BASE_URL + "apply_vacancies", {
+    
         user_id: userId,
         vacancies_id: selectedIds,
-      },
+    
     });
 
     alert(`Отклики отправлены на ${selected.length} вакансии.`);
@@ -324,7 +327,7 @@ async function submitSelected() {
 function handleAuthRedirect() {
   const clientId = import.meta.env.VITE_HH_CLIENT_ID; // Замените на ваш client_id
   const redirectUri = import.meta.env.VITE_HH_REDIRECT_URL; // Ваш URL для callback
-  window.location.href = `https://hh.ru/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}`;
+  window.location.href = `https://hh.ru/oauth/authorize?response_type=code&client_id=${clientId}`;
 }
 </script>
 

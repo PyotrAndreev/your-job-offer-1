@@ -7,8 +7,8 @@ from dataclasses import dataclass
 import logging
 
 from sqlalchemy.orm import sessionmaker
-from backend.database.models import Vacancy as DB_Vacancy, engine
-from backend.database.updating_bd import update_time, get_last_update
+from models import Vacancy as DB_Vacancy, engine
+from updating_bd import update_time, get_last_update
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -390,3 +390,8 @@ get_hh_vacancies(datetime(2025, 4, 17))
 
 
 session.close()
+
+def run_hh_import():
+    start_date = datetime(2025, 4, 17)
+    get_hh_vacancies(start_date)
+    session.close()

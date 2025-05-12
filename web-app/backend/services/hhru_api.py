@@ -16,7 +16,6 @@ def exchange_code_for_tokens(authorization_code):
 		"client_id": client_id,
 		"client_secret": client_secret,
 		"code": authorization_code,
-		"redirect_uri" : " http://194.67.88.90"
 	}
 
 	headers = {
@@ -33,7 +32,7 @@ def exchange_code_for_tokens(authorization_code):
 	else:
 		access_token = None
 		refresh_token = None
-	return (access_token, refresh_token)
+	return (access_token, refresh_token, response.text)
 
 
 def exchange_refresh_token_for_tokens(refresh_token):

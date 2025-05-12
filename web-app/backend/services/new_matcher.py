@@ -1,9 +1,8 @@
 from rapidfuzz import fuzz
 import requests
 from concurrent.futures import ThreadPoolExecutor
-import heapq
 
-from database.db_functions import get_all_vacancies, get_resume, create_resume
+from data_base.db_functions import get_all_vacancies, get_resume
 
 
 ## модель: на вход принимаем айдишник пользователя -> находим в бд его резюме (если есть) ->
@@ -54,7 +53,8 @@ def process_vacancy(vacancy, resume):
         similarity += match_skills_and_requirements(requirements, skills)
     job_title = vacancy.job_title.lower()
     similarity += match_skills_and_requirements(job_title, skills)
-    return similarity, vacancy.vacancy_id, vacancy.job_title
+    similarity += match_skills_and_requirements(job_title, resume.job_title)
+    return similarity, vacancy.vacancy_id, vacancy.job_title, vacancy.vacancy_id_in_hh
 
 
 ## итоговая функция подбора вакансий с использованием нескольких потоков
@@ -64,13 +64,13 @@ def search_vacancies_for_user(user_id, num_of_vacancies):
     with ThreadPoolExecutor(max_workers=40) as executor:
         resume = get_resume(user_id)
         for vacancy in executor.map(lambda vacancy: process_vacancy(vacancy, resume), vacancies):
-            similarity, vacancy_id, job_title = vacancy
+            similarity, vacancy_id, job_title, vacancy_id_in_hh = vacancy
             if len(best_vacancies) < num_of_vacancies:
-                best_vacancies.append((similarity, vacancy_id, job_title))
+                best_vacancies.append((similarity, vacancy_id, job_title, vacancy_id_in_hh))
             else:
                 min_similarity_index = min(range(len(best_vacancies)), key=lambda i: best_vacancies[i][0])
                 if similarity > best_vacancies[min_similarity_index][0]:
-                    best_vacancies[min_similarity_index] = (similarity, vacancy_id, job_title)
+                    best_vacancies[min_similarity_index] = (similarity, vacancy_id, job_title, vacancy_id_in_hh)
     return best_vacancies
 
 """ print(1)
@@ -86,3 +86,4 @@ create_resume(3, "", "", "", "", "", 0, 0,
               "", "",
               "", False, "", ['пирсинг', 'тату-мастер']) """
 
+print(search_vacancies_for_user(1, 5))
