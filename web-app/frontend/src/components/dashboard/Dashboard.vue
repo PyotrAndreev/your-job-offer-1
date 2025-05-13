@@ -229,11 +229,10 @@ onMounted(async () => {
     
       console.log(response.data);
       // store.userAuthorizedWithHH = true;
+      window.history.replaceState({}, document.title, window.location.pathname);
       localStorage.setItem("userAuthorizedWithHH", JSON.stringify(true));
-
       window.location.reload()
       // Очищаем URL от параметров
-      window.history.replaceState({}, document.title, window.location.pathname);
     } catch (err) {
       console.error("Ошибка при обмене кода на токен:", err);
     }
@@ -255,6 +254,9 @@ function decrementNumber() {
   if (number.value > 1) number.value--;
 }
 
+
+
+
 async function searchOffers() {
   try {
     const userId = localStorage.getItem("user_id");
@@ -268,8 +270,7 @@ async function searchOffers() {
     );
 
     const { job_titles, vacancies_id } = response.data;
-    сonsole.log("Полученные вакансии:", job_titles, vacancies_id, response);
-
+    console.log("Полученные вакансии:", job_titles, vacancies_id, response);
     offers.value = job_titles.map((title, index) => ({
       company: "Компания", // замените если есть в ответе
       date: new Date().toLocaleDateString("ru-RU"),

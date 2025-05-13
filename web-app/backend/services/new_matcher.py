@@ -1,89 +1,89 @@
 from rapidfuzz import fuzz
 import requests
 from concurrent.futures import ThreadPoolExecutor
-
+from functools import lru_cache
 from database.db_functions import get_all_vacancies, get_resume
 
-
-## модель: на вход принимаем айдишник пользователя -> находим в бд его резюме (если есть) ->
-## по его скиллам ищем при помощи метрики Левенштайна наиболее подходящие вакансии + чекаем по другим критериям
-
-## функция для поиска похожих на target слов в text при помощи сходства по Левенштайну
-def lev_check(text, target):
-    return fuzz.partial_ratio(text.lower(), target.lower()) / 100
-
-
-## функция сопоставления скиллов пользователя и описания вакансии
-def match_skills_and_requirements(requirements, skills):
-    if requirements == None or skills == None:
-        return 0
-    similarity = 0
-    for skill in skills:
-        similarity += lev_check(requirements, skill.lower())
-    return similarity
-
-
-## получение текущего курса для перевода в рубли
+# Cache for exchange rates to avoid repeated API calls
+@lru_cache(maxsize=32)
 def get_rate(currency_code):
     api_key = '7bee4100c63bb001f46aa891'
-    response = requests.get(f'https://v6.exchangerate-api.com/v6/{api_key}/latest/{currency_code}')
-    if response.ok:
+    try:
+        response = requests.get(
+            f'https://v6.exchangerate-api.com/v6/{api_key}/latest/{currency_code}',
+            timeout=5
+        )
+        response.raise_for_status()
         data = response.json()
-        rate = int(data['conversion_rates']['RUB'])
-        return rate
-    else:
+        return int(data['conversion_rates']['RUB'])  # Changed to RUB (ISO code)
+    except (requests.RequestException, ValueError, KeyError):
+        return 1  # Fallback to 1:1 for RUB or failed requests
+
+def normalize_text(text):
+    return text.lower() if text else ""
+
+def lev_check(text, target):
+    return fuzz.partial_ratio(normalize_text(text), normalize_text(target)) / 100
+
+def match_skills_and_requirements(requirements, skills):
+    if not requirements or not skills:
+        return 0
+    return sum(lev_check(requirements, skill) for skill in skills)
+
+def process_salary(salary_str, min_salary):
+    if not salary_str:
+        return 0
+    
+    parts = salary_str.split()
+    if len(parts) < 3 or parts[0] == "?" or parts[2] == "?":
+        return 0
+    
+    currency = 'RUB' if parts[2] == 'RUR' else parts[2]
+    rate = get_rate(currency)
+    
+    try:
+        if parts[1] != "?":
+            salary_value = int(parts[1]) * rate
+            return 2 if min_salary * 0.9 <= salary_value else 0
+        else:
+            min_vacancy_salary = int(parts[0]) * rate
+            return 2 if min_vacancy_salary >= min_salary * 1.1 else 0
+    except (ValueError, IndexError):
         return 0
 
-## подбора вакансии по различным параметрам (место, зп, скиллы)
 def process_vacancy(vacancy, resume):
-    skills = resume.skills
+    if not resume:
+        return 0, vacancy.vacancy_id, vacancy.job_title, vacancy.vacancy_id_in_hh
+    
     similarity = 0
-    if vacancy.salary and vacancy.salary.split()[0] != "?":
-        salary = vacancy.salary.split()
-        if salary[2] != "?":
-            if salary[2] == 'RUR':
-                salary[2] = 'RUB'
-            rate = get_rate(salary[2])
-            if salary[1] != "?" and resume.min_salary * 0.9 <= int(salary[1]) * rate:
-                similarity += 2
-            elif salary[1] == "?" and resume.min_salary * 1.1 >= int(salary[0]) * rate:
-                similarity += 2
+    
+    # Salary matching
+    similarity += process_salary(vacancy.salary, resume.min_salary)
+    
+    # Skills matching
     if vacancy.requirements:
-        requirements = vacancy.requirements.lower()
-        similarity += match_skills_and_requirements(requirements, skills)
-    job_title = vacancy.job_title.lower()
-    similarity += match_skills_and_requirements(job_title, skills)
+        similarity += match_skills_and_requirements(vacancy.requirements, resume.skills)
+    
+    # Job title matching
+    job_title = normalize_text(vacancy.job_title)
+    similarity += match_skills_and_requirements(job_title, resume.skills)
     similarity += match_skills_and_requirements(job_title, resume.job_title)
-    return similarity, vacancy.vacancy_id, vacancy.job_title, vacancy.vacancy_id_in_hh
+    
+    return similarity, vacancy.vacancy_id, job_title, vacancy.vacancy_id_in_hh
 
-
-## итоговая функция подбора вакансий с использованием нескольких потоков
-def search_vacancies_for_user(user_id, num_of_vacancies):
+def search_vacancies_for_user(user_id, num_of_vacancies=5):
     vacancies = get_all_vacancies()
-    best_vacancies = []
-    with ThreadPoolExecutor(max_workers=40) as executor:
-        resume = get_resume(user_id)
-        for vacancy in executor.map(lambda vacancy: process_vacancy(vacancy, resume), vacancies):
-            similarity, vacancy_id, job_title, vacancy_id_in_hh = vacancy
-            if len(best_vacancies) < num_of_vacancies:
-                best_vacancies.append((similarity, vacancy_id, job_title, vacancy_id_in_hh))
-            else:
-                min_similarity_index = min(range(len(best_vacancies)), key=lambda i: best_vacancies[i][0])
-                if similarity > best_vacancies[min_similarity_index][0]:
-                    best_vacancies[min_similarity_index] = (similarity, vacancy_id, job_title, vacancy_id_in_hh)
-    return best_vacancies
-
-""" print(1)
-create_resume(1, "", "", "", "", "", 100000, 0,
-                  "", "",
-                  "", False, "", ['C++', 'Linux', 'Python', 'Go', 'Разработчик', 'IT'])
-print(2)
-create_resume(2, "", "", "", "", "", 0, 0,
-              "", "",
-              "", False, "", ['курьер', 'доставка'])
-print(3)
-create_resume(3, "", "", "", "", "", 0, 0,
-              "", "",
-              "", False, "", ['пирсинг', 'тату-мастер']) """
-
-print(search_vacancies_for_user(1, 5))
+    if not vacancies:
+        return []
+    
+    resume = get_resume(user_id)
+    if not resume:
+        return []
+    
+    # Process vacancies in parallel
+    with ThreadPoolExecutor(max_workers=min(40, len(vacancies))) as executor:
+        results = list(executor.map(lambda v: process_vacancy(v, resume), vacancies))
+    
+    # Sort by similarity and return top N
+    results.sort(key=lambda x: x[0], reverse=True)
+    return results[:int(num_of_vacancies)]

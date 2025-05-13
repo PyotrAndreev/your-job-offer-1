@@ -161,10 +161,10 @@ def refresh_tokens(tokens_id, new_refresh, new_access):
 
 ## функция получения аксес токена по айдишнику пользователя
 def get_hh_access_token(user_id):
-    tokens = session.query(Tokens).filter(Tokens.user_id == user_id).scalar()
-    if tokens == None:
+    token = session.query(Tokens).filter(Tokens.user_id == user_id).first()
+    if token is None:
         return None
-    return tokens.access_token
+    return token.access_token
 
 ## функция получения последнего добавленного пользователя (его айдишника)
 def get_last_user_id():
