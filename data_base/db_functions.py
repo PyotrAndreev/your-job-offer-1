@@ -1,6 +1,6 @@
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
-from models import engine, User, Vacancy, Resume, Tokens, Submission
+from data_base.models import engine, User, Vacancy, Resume, Tokens, Submission
 from sqlalchemy import func, and_
 
 # Создаем сессию
@@ -88,10 +88,18 @@ def get_vacancy(vacancy_id):
     vacancy = session.query(Vacancy).filter(Vacancy.vacancy_id == vacancy_id).first()
     return vacancy
 
+## поиск вакансии по айдишнику в агрегаторе
+def search_vacancy(vacancy_id_in_hh):
+    vacancy = session.query(Vacancy).filter(Vacancy.vacancy_id_in_hh == vacancy_id_in_hh).first()
+    if not vacancy == None:
+        return vacancy.vacancy_id
+    return 0
+
 ## функция добавления нового отклика в базу данных
-def create_submission(resume_id, status, sent_at, vacancy_id):
+def create_submission(resume_id, status, sent_at, vacancy_id, response_id):
     new_submission = Submission(
         resume_id=resume_id,
+        response_id=response_id,
         status=status,
         sent_at=sent_at,
         vacancy_id=vacancy_id,
@@ -100,6 +108,25 @@ def create_submission(resume_id, status, sent_at, vacancy_id):
     session.add(new_submission)
     session.commit()
     print(f"User created: {new_submission.submission_id}, Vacancy_id: {new_submission.vacancy_id}, Resume_id: {new_submission.resume_id}")
+
+## поиск отклика по айдишнику отклика в агрегаторе
+def search_submission(response_id):
+    submission = session.query(Submission).filter(Submission.response_id == response_id).first()
+    return submission.id
+
+## получение всех откликов
+def get_all_submissions():
+    submissions = session.query(Submission).all()
+    return submissions
+
+## получение айдишника отклика по айдишникам вакансии и резюме
+def get_submission_by_vacancy_and_resume(vacancy_id, resume_id):
+    submission = session.query(Submission).filter(
+        and_(Submission.vacancy_id == vacancy_id, Submission.resume_id == resume_id)
+    ).first()
+    if submission == None:
+        return None
+    return submission.response_id
 
 ## функция для обновления статуса отклика
 def update_status(submission_id, new_status):
