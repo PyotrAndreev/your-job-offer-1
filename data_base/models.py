@@ -67,7 +67,7 @@ class Vacancy(Base):
     submissions = relationship("Submission", back_populates="vacancy")
 
     def __repr__(self):
-        return f"<Vacancy(vacancy_id={self.vacancy_id}, job_title={self.job_title}, created_at={self.created_at})>"
+        return f"<Vacancy(vacancy_id={self.vacancy_id}, job_title={self.job_title}, vacancy_id_in_hh={self.vacancy_id_in_hh}, created_at={self.created_at})>"
 
 class Resume(Base):
     __tablename__ = 'resume'
@@ -119,6 +119,7 @@ class Submission(Base):
     __tablename__ = 'submission'
     submission_id = Column(Integer, primary_key=True, autoincrement=True)
     resume_id = Column(BigInteger, ForeignKey('resume.resume_id'))
+    response_id = Column(BigInteger)
     status = Column(String)
     sent_at = Column(DateTime)
     vacancy_id = Column(BigInteger, ForeignKey('vacancy.vacancy_id'))
