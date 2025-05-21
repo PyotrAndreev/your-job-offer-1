@@ -98,7 +98,7 @@
 ---
 
 ## Аналитика
-![Аналитика по зп](https://github.com/PyotrAndreev/your-job-offer-1/raw/data_base/Аналитика_по_зп_new/Аналитика_по_зп_new.png)
+![Аналитика по зп](https://github.com/PyotrAndreev/your-job-offer-1/raw/data_base/Аналитика_по_зп_new.png)
 
 ---
 
