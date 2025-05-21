@@ -97,6 +97,11 @@
 
 ---
 
+## Аналитика
+![Image alt](https://github.com/PyotrAndreev/your-job-offer-1/raw/data_base/Аналитика_по_зп_new/image.png)
+
+---
+
 ## 📞 Контакты для связи
 Telegram: @pyotr_job  
 Андреев Пётр Андреевич
