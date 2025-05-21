@@ -98,7 +98,7 @@
 ---
 
 ## Аналитика
-![Image alt](https://github.com/PyotrAndreev/your-job-offer-1/raw/data_base/%D0%90%D0%BD%D0%B0%D0%BB%D0%B8%D1%82%D0%B8%D0%BA%D0%B0_%D0%BF%D0%BE_%D0%B7%D0%BF_new.png/image.png)
+![Image alt](https://github.com/PyotrAndreev/your-job-offer-1/blob/data_base/%D0%90%D0%BD%D0%B0%D0%BB%D0%B8%D1%82%D0%B8%D0%BA%D0%B0_%D0%BF%D0%BE_%D0%B7%D0%BF_new.png/image.png)
 
 ---
 
