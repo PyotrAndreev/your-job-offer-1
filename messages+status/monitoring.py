@@ -3,9 +3,9 @@ from requests.exceptions import HTTPError, Timeout, ConnectionError
 import logging
 import time
 
-client_id = "GES2OLI3SIBO9IEP71CQNM9P35M6FRG29SGD1JFICCRI2P2PQD6F5SBFQHLDO3LD"
-client_secret = "NV4JTC1JU0IJNQLBEQLSDDSOQ2RSMDFGNA3NI8UNAJT2R7IGUVIPVNELQU5DR8FG"
-authorization_code = "PK523D5ANTALB1QQ1V0E6P53852F6SFR5C707A6B4EUJ08PKCK89QCOOBM4H0J5F"
+client_id = ""
+client_secret = ""
+authorization_code = ""
 
 def get_response_status(response_id, access_token):
     url = f'https://api.hh.ru/negotiations/{response_id}'
@@ -132,7 +132,7 @@ get_access_and_refresh_tokens(client_id, client_secret, authorization_code)
 vacancy_id = '118747689'
 response_id = '4433138566'
 chat_id = '4445889311'
-access_token = 'USERPGVQMKFD1EGAU2LLB43JHD57RAF9J0E1AKONNNA5KSKOAD7SC76A5PAEHD73'
+access_token = ''
 
 #get_responses(access_token)
 #print(get_response_status(response_id, access_token))
